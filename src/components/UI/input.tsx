@@ -2,7 +2,7 @@
 
 import React, { forwardRef, ForwardedRef, InputHTMLAttributes, LegacyRef } from 'react';
 type InputProps = {
-  name: string | File | null;
+  name: string;
   wrapperCls?: string;
   inputCls?: string;
   label?: string;
@@ -14,8 +14,8 @@ const Input: React.FC<InputProps> = forwardRef(
   (
     {
       name,
-      wrapperCls = 'flex flex-col w-full text-sm text-white',
-      inputCls = 'w-full px-4 py-2 bg-white/10 text-white text-base hover:px-6 transition-all rounded-sm',
+      wrapperCls = 'flex flex-col gap-2 w-full text-sm text-black/80',
+      inputCls = 'w-full px-4 py-2 bg-white/10 text-black/80 text-base hover:px-6 transition-all rounded-sm border border-violet-300 mb-2 rounded-sm text-sm',
       label,
       inputError,
       inputRef,
