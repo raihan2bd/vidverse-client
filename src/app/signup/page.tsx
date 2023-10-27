@@ -2,11 +2,21 @@
 import { FormEvent, useState } from "react";
 import Link from "next/link";
 import axios from "axios";
+import useInput from "@/hooks/useInput";
 import Input from "@/components/UI/input";
 import Button from "@/components/UI/Button";
+import { validateInput, ValidationResultType } from "@/utils/validator";
 
 const Signup = () => {
   const [showPass, setShowPass] = useState(false);
+
+  const {
+    value: name,
+    errorMsg: nameError,
+    isTouched: isNameTouched,
+    valueChangeHandler: nameChangeHandler,
+    inputBlurHandler: nameBlurHandler,
+  } = useInput((value: string) => validateInput(value, { inputType: 'string', minLength: 3, maxLength: 100, pattern: /^[A-Za-z]+(\s[A-Za-z]+)?$/  }));
 
   const handleShowPass = () => {
     setShowPass((prev) => !prev);
@@ -42,9 +52,12 @@ const Signup = () => {
           name="name"
           type="text"
           label="Full Name"
-          inputError={null}
-          required
           placeholder="Enter your full name"
+          value={name}
+          inputError={isNameTouched? nameError: null}
+          onChange={nameChangeHandler}
+          onBlur={nameBlurHandler}
+          required
         />
         <Input
           name="email"
