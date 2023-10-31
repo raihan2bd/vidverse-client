@@ -16,33 +16,25 @@ const LoginButton = () => {
 
   if (session && session.user)
     return (
-      <div className="flex gap-4 ml-auto">
-        <p className="text-sky-600">{session.user.user_name}</p>
+      <div className="flex gap-4 ml-auto items-center">
+        <p className="text-sky-400 ">{session.user.user_name}</p>
         <Button type="button" onClick={() => {
           signOut()
         }}
-          className="flex gap-4 ml-auto text-red-600"
+        btnClass="bg-red-500 px-3 py-2"
         >
-          Sign Out
+          Logout
         </Button>
       </div>
     );
 
   return (
-    <div className="flex gap-4 ml-auto items-center">
       <Link
         href={"/api/auth/signin"}
-        className="flex gap-4 ml-auto text-green-600"
+        className="text-white bg-orange-400 rounded-sm hover:bg-orange-700 px-3 py-2"
       >
-        Sign In
+        Login
       </Link>
-      <Link
-        href={"/signup"}
-        className="flex gap-4 ml-auto bg-green-600 text-green-200 p-2 rounded"
-      >
-        Sign Up
-      </Link>
-    </div>
   );
 };
 
