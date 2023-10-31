@@ -66,8 +66,6 @@ const Signup = () => {
     }
   };
 
-  console.log(isFormValid)
-
   return (
     <section className="flex flex-col justify-center items-center p-6">
       <form

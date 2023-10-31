@@ -28,8 +28,6 @@ export const authOptions: NextAuthOptions = {
           },
         });
         if (res.status !== 200) {
-          console.log(res.statusText);
-
           return null;
         }
         const user = await res.json();
