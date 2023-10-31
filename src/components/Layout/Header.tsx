@@ -1,5 +1,6 @@
 "use client"
 import Link from "next/link";
+import LoginButton from "../UI/LoginButton";
 
 const Header = () => {
   return (
@@ -8,7 +9,7 @@ const Header = () => {
       <nav>
         <ul>
           <li>
-            <Link href="/login">Login</Link>
+          <LoginButton />
           </li>
         </ul>
       </nav>
