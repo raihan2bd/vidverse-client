@@ -22,7 +22,7 @@ const UILayout = ({children}: PropTypes) => {
   return (
     <>
     <Header onSetShowSideBar={setShowSideBar} showSideBar={showSideBar} />
-    <main>
+    <main className="pt-20">
       {children}
     </main>
     <Footer />

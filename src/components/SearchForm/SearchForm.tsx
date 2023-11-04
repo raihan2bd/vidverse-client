@@ -1,7 +1,12 @@
 import { FormEvent, useState, } from "react";
 import { BiSearch } from 'react-icons/bi'
 
-const SearchForm = () => {
+interface PropsTypes {
+  onHideSearchBar: () => void;
+
+}
+
+const SearchForm = ({onHideSearchBar}: PropsTypes) => {
   const [searchTerm, setSearchTerm] = useState("");
 
   const handleInputChange = (e: FormEvent<HTMLInputElement>) => {
@@ -10,6 +15,8 @@ const SearchForm = () => {
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setSearchTerm("");
+    onHideSearchBar();
   };
 
   
