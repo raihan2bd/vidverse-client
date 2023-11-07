@@ -21,13 +21,13 @@ const SearchForm = ({onHideSearchBar}: PropsTypes) => {
 
   
   return (
-    <form className="flex-shrink flex gap-2 bg-violet-400 rounded-lg min-w-[10px]" onSubmit={handleSubmit}>
+    <form className="flex-shrink flex gap-2 bg-violet-400 rounded-[5px] min-w-[10px]" onSubmit={handleSubmit}>
       <input
         type="text"
         placeholder="Search"
-        className="bg-transparent p-2 text-black rounded-lg focus:outline-none w-full"
+        className="bg-transparent p-2 text-black rounded-[inherit] focus:outline-none w-full"
       />
-      <button className="p-2 bg-violet-600 rounded-lg h-full transform hover:translate-y-0 hover:translate-x-1"><span className="text-2xl"><BiSearch /></span></button>
+      <button className="p-2 bg-violet-600 rounded-[inherit] h-full transform hover:translate-y-0 hover:translate-x-1"><span className="text-2xl"><BiSearch /></span></button>
     </form>
   );
 }
