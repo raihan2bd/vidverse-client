@@ -2,7 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700&display=swap");
+
 
 * {
   margin: 0;
@@ -10,18 +11,53 @@
   box-sizing: border-box;
 }
 
-html, body {
-  font-family: 'Lato', sans-serif;
+html,
+body {
+  font-family: "Lato", sans-serif;
+  background: #dbdada;
 }
 
 button {
   transition: 0.2s ease-in-out;
 }
 
-button:active, button:hover {
+button:active,
+button:hover {
   transform: translateY(-2px);
 }
 
 .btn-transform-none {
   transform: none !important;
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.no-scrollbar {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+.thin-scrollbar::-webkit-scrollbar {
+  scrollbar-width: thin;
+}
+
+.thin-scrollbar::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.thin-scrollbar::-webkit-scrollbar-thumb {
+  background: #888;
+}
+
+.thin-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+.thin-scrollbar {
+  -ms-overflow-style: initial;
+  scrollbar-width: thin!important;
 }
