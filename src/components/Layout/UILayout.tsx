@@ -2,6 +2,7 @@
 
 import { ReactNode, useState } from "react";
 import Header from "./Header";
+import Sidebar from "./Sidebar";
 import Footer from "./Footer";
 
 interface PropTypes {
@@ -18,14 +19,19 @@ const UILayout = ({children}: PropTypes) => {
   const hideSideBarHandler = () => {
     setShowSideBar(false)
   }
+
+  const mainContentCls = !showSideBar ? "md:w-[77%] md:ms-auto" : 'w-[100%]'
   
   return (
     <>
     <Header onSetShowSideBar={setShowSideBar} showSideBar={showSideBar} />
-    <main className="pt-20">
-      {children}
+    <main className="pt-20 flex gap-4">
+      <Sidebar showSideBar={showSideBar} />
+      <div className={mainContentCls}>
+        {children}
+        <Footer />
+      </div>
     </main>
-    <Footer />
     </>
   );
 }
