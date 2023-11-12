@@ -1,5 +1,5 @@
 export default async () => {
-  const response = await fetch('http://localhost:4000/api/v1/videos');
+  const response = await fetch('http://localhost:4000/api/v1/videos', { cache: 'no-store' });
   if(!response.ok) {
     if(response.status === 401) {
       // Logout the current user
