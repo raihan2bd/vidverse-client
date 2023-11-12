@@ -9,9 +9,8 @@ const Videos = async () => {
   });
 
   return (
-    <div>
-      <h1>Videos</h1>
-      <ul>
+    <div className="p-4">
+      <ul className="list-none flex gap-4 flex-wrap w-fit mx-auto">
         {videosContent}
       </ul>
     </div>
