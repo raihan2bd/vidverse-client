@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import noThumb from "../../../public/images/default-thumb.jpg";
 

@@ -1,8 +1,9 @@
 import getAllVideos from "@/lib/getAllVideos";
-import VideoItem from "@/components/VideoItem/VideoItem";
+import VideoItem from "@/components/Videos/VideoItem";
+import LoadMoreVideos from "@/components/Videos/LoadMoreVideos";
 
 const Videos = async () => {
-  const videos = await getAllVideos();
+  const { videos, has_next_page} = await getAllVideos(1);
   
   const videosContent = videos.map((video: VideoType) => {
     return <VideoItem key={video.id} video={video} />
@@ -10,8 +11,9 @@ const Videos = async () => {
 
   return (
     <div className="p-4">
-      <ul className="list-none flex gap-4 flex-wrap w-fit mx-auto">
+      <ul className="list-none flex gap-4 flex-wrap w-fit justify-between">
         {videosContent}
+        <LoadMoreVideos has_next_page={has_next_page} />
       </ul>
     </div>
   );
