@@ -1,6 +1,6 @@
-export default async (page: number) => {
-  const limit = 1;
-  const response = await fetch(`http://localhost:4000/api/v1/videos?page=${page}&limit=${limit}`, { cache: 'no-store' });
+export default async (page: number, searchQuery: string = "") => {
+  const limit = 24;
+  const response = await fetch(`http://localhost:4000/api/v1/videos?search=${searchQuery}&page=${page}&limit=${limit}`, { cache: 'no-store' });
   if(!response.ok) {
     if(response.status === 401) {
       // Logout the current user

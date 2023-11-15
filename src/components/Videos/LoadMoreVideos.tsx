@@ -7,7 +7,7 @@ import VideoItem from "./VideoItem";
 
 import Spinner from '@/components/UI/Spinner'
 
-const LoadMoreVideos = ({has_next_page}: {has_next_page: boolean}) => {
+const LoadMoreVideos = ({has_next_page, searchQuery}: {has_next_page: boolean, searchQuery: string|string[]}) => {
   const [videos, setVideos] = useState<VideoType[]>([]);
   const [page, setPage] = useState(1);
   const [hasNextPage, setHasNextPage] = useState(has_next_page);
@@ -17,7 +17,7 @@ const LoadMoreVideos = ({has_next_page}: {has_next_page: boolean}) => {
   const onLoadMore = async () => {
     await new Promise((resolve) => setTimeout(resolve, 2000));
     const nextPage = page + 1;
-    const { videos, has_next_page } = await getAllVideos(nextPage);
+    const { videos, has_next_page } = await getAllVideos(nextPage, Array.isArray(searchQuery) ? searchQuery.join(' ') : searchQuery);
     setVideos((prevVideos: VideoType[]) => [...prevVideos, ...videos]);
     setPage(page + 1);
     setHasNextPage(has_next_page);
