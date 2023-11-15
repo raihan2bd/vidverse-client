@@ -1,5 +1,4 @@
-export default async (page: number, searchQuery: string = "") => {
-  const limit = 24;
+export default async (page: number, searchQuery: string = "", limit: number = 24) => {
   const response = await fetch(`http://localhost:4000/api/v1/videos?search=${searchQuery}&page=${page}&limit=${limit}`, { cache: 'no-store' });
   if(!response.ok) {
     if(response.status === 401) {
