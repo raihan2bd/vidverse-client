@@ -3,6 +3,7 @@ import { GoThumbsup, GoThumbsdown  } from "react-icons/go";
 
 import getSingleVideo from "@/lib/getSingleVideo";
 import RelatedVideos from "@/components/Videos/RelatedVideos";
+import Comments from "@/components/Videos/Comments";
 import Button from "@/components/UI/Button";
 import PageNotFound from "@/components/UI/PageNotFound";
 import defaultThumb from "../../../../public/images/default-thumb.jpg";
@@ -44,9 +45,11 @@ const Video = async ({ params: { id } }: Props) => {
         </div>
         
         <p>{video.description}</p>
+
+        <Comments id={videoId} views={video.views} />
       </article>
 
-      <aside className="flex-auto flex-shrink-1 max-w-[100%]">
+      <aside className="md:ms-4 flex-auto flex-shrink-1 w-[100%] md:w-[280px] max-w-[100%]">
         <RelatedVideos id={videoId} />
       </aside>
     </div>
