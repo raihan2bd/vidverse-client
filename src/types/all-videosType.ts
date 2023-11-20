@@ -7,3 +7,11 @@ interface VideoType {
   channel_title: string;
   channel_logo: string;
 }
+
+interface CommentType {
+  id: number;
+  name: string;
+  avatar: string;
+  comment: string;
+  channel_id?: number;
+}
