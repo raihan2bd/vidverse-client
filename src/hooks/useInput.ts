@@ -52,6 +52,10 @@ const useInput = (validateValue: (value: string) => ValidationResultType) => {
     dispatch({ type: 'RESET' });
   };
 
+  const setValue = (value: string) => {
+    dispatch({ type: 'INPUT', value });
+  }
+
   return {
     value: inputState.value,
     errorMsg,
@@ -59,6 +63,7 @@ const useInput = (validateValue: (value: string) => ValidationResultType) => {
     valueChangeHandler,
     inputBlurHandler,
     reset,
+    setValue,
   };
 };
 
