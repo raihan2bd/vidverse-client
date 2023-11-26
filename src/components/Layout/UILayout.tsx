@@ -24,7 +24,7 @@ const UILayout = ({children}: PropTypes) => {
     setShowSideBar(false)
   }
 
-  let mainContentCls = !showSideBar ? "md:w-[77%] md:ms-auto" : 'w-[100%]'
+  let mainContentCls = !showSideBar ? "w-full md:w-[77%] md:ms-auto clear-both" : 'w-[100%]'
 
   let sidebarClasses = showSideBar ? "block md:hidden fixed pt-[5rem] left-0 bottom-0 z-10 h-screen w-[100%] bg-white md:w-1/5 md:min-w-[280px] overflow-y-scroll thin-scrollbar text-black": "hidden md:block fixed pt-[5rem] left-0 bottom-0 z-10 h-screen w-[100%] bg-white md:w-[23%] overflow-y-scroll thin-scrollbar text-black"
 
