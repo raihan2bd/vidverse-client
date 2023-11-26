@@ -9,7 +9,7 @@ import Spinner from "@/components/UI/Spinner";
 import Input from "@/components/UI/input";
 import Button from "@/components/UI/Button";
 
-const API_URL = process.env.NEXT_API_URL;
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 const UploadOrEditVideoPage = () => {
   const searchParams = useSearchParams();
@@ -64,7 +64,7 @@ const UploadOrEditVideoPage = () => {
       const fetchVideo = async () => {
         try {
           setLoading(true);
-          const response = await fetch(`${API_URL}/v1/api/videos/${videoId}`);
+          const response = await fetch(`${API_URL}/api/v1/videos/${videoId}`);
           const data = await response.json();
           if (data) {
             setTitle(data.title);
@@ -73,7 +73,7 @@ const UploadOrEditVideoPage = () => {
           }
           setLoading(false);
         } catch (error: any) {
-          const status = error.response.status || 500;
+          const status = error && error.response && error.response.status? error.response.status : 500;
           switch (status) {
             case 401:
               router.push(
@@ -103,16 +103,16 @@ const UploadOrEditVideoPage = () => {
     const fetchChannels = async () => {
       try {
         setLoadingChannels(true);
-        const response = await fetch(`${API_URL}/v1/api/channels`);
+        const response = await fetch(`${API_URL}/api/v1/channels`);
         const data = await response.json();
-        if (data.channels.length > 0) {
+        console.log(data)
+        if (data.channels.length <= 0) {
           setError("No channels found");
         } else {
-          setSelectedChannel(data.channel.id);
+          setChannels(data.channels)
         }
         setLoadingChannels(false);
       } catch (error: any) {
-        console.log(error);
         const status =
           error && error.response && error.response.status
             ? error.response.status
@@ -221,9 +221,12 @@ const UploadOrEditVideoPage = () => {
             {loadingChannels ? (
               <option>Loading...</option>
             ) : (
+              channels.length <= 0 ? (
+                <option>No channels found</option>
+              ) :
               channels.map((channel: any) => (
                 <option key={channel.id} value={channel.id}>
-                  {channel.name}
+                  {channel.title}
                 </option>
               ))
             )}
