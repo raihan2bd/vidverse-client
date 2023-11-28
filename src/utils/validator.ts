@@ -142,3 +142,42 @@ export const validateInput = (
     isValid: true,
   };
 };
+
+export const validateImage = (image: File | null): ValidationResultType => {
+  if (image == undefined || image == null) {
+    return {
+      isValid: false,
+      msg: `Please upload an image.`,
+    }
+  }
+  const condition = image.type === 'image/jpeg' || image.type === 'image/png' || image.type === 'image/jpg';
+  if (condition === false) {
+    return {
+      isValid: false,
+      msg: `Please upload a valid image file in JPEG and PNG.`,
+    }
+  }
+  return { 
+    isValid: true,
+   }
+};
+
+export const validateVideo = (video: File | null): ValidationResultType => {
+  if (video == undefined || video == null) {
+    return {
+      isValid: false,
+      msg: `Please upload a video.`,
+    }
+  }
+  const condition = video.type === 'video/mp4' || video.type === 'video/ogg' || video.type === 'video/webm' || video.type === 'video/mov' || video.type === 'video/avi';
+  if (!condition) {
+    return {
+      isValid: false,
+      msg: `Please upload a valid video file in MP4, OGG and WEBM.`,
+    }
+  }
+  return { 
+    isValid: true,
+   }
+};
+
