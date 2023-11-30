@@ -1,22 +1,24 @@
 import { useReducer, ChangeEvent } from 'react';
 import { ValidationResultType } from '@/utils/validator';
 
-interface InputState {
-  value: string;
+interface InputState<T> {
+  value: T;
   isTouched: boolean;
 }
 
-type InputAction =
-  | { type: 'INPUT'; value: string; }
+type InputAction<T> =
+  | { type: 'INPUT'; value: T; }
   | { type: 'BLUR' }
   | { type: 'RESET' };
 
-const initialInputState: InputState = {
-  value: '',
-  isTouched: false,
+const initialInputState = <T,>(initialValue: T): InputState<T> => {
+  return {
+    value: initialValue,
+    isTouched: false,
+  };
 };
 
-const inputStateReducer = (state: InputState, action: InputAction): InputState => {
+const inputStateReducer = <T,>(state: InputState<T>, action: InputAction<T>): InputState<T> => {
   if (action.type === 'INPUT') {
     return { ...state, value: action.value };
   }
@@ -24,23 +26,23 @@ const inputStateReducer = (state: InputState, action: InputAction): InputState =
     return { ...state, isTouched: true };
   }
   if (action.type === 'RESET') {
-    return { ...initialInputState };
+    return initialInputState(state.value);
   }
   return state;
 };
 
-const useInput = (validateValue: (value: string) => ValidationResultType) => {
+const useDynamicInput = <T,>(validateValue: (value: T) => ValidationResultType, initialValue: T) => {
   const [inputState, dispatch] = useReducer(
     inputStateReducer,
-    initialInputState
+    initialInputState(initialValue)
   );
 
-  const result = validateValue(inputState.value);
+  const result = validateValue(inputState.value as T);
 
   const errorMsg = !result.isValid? result.msg || 'Input is invalid.' : null
 
   const valueChangeHandler = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const value = event.target.value;
+    const value = event.target.value as unknown as T;
     dispatch({ type: 'INPUT', value });
   };
 
@@ -52,7 +54,7 @@ const useInput = (validateValue: (value: string) => ValidationResultType) => {
     dispatch({ type: 'RESET' });
   };
 
-  const setValue = (value: string) => {
+  const setValue = (value: T) => {
     dispatch({ type: 'INPUT', value });
   }
 
@@ -67,4 +69,4 @@ const useInput = (validateValue: (value: string) => ValidationResultType) => {
   };
 };
 
-export default useInput;
+export default useDynamicInput;
