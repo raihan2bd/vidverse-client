@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { validateImage, validateInput, validateVideo } from "@/utils/validator";
 import Input from "@/components/UI/input";
 import Button from "@/components/UI/Button";
@@ -103,7 +103,6 @@ const UploadOrEditVideoForm = ({
 
   let formIsValid = false;
   if(edit) {
-    // if any field is touched it should be valid
     formIsValid = !titleError && !descriptionError && selectedChannel !== "" && (titleIsTouched || isVideoTouched || descriptionIsTouched || isThumbnailTouched)
   } else {
     formIsValid = !titleError && !videoError && !descriptionError && !thumbnailError && selectedChannel !== "" && titleIsTouched && isVideoTouched && descriptionIsTouched && isThumbnailTouched;
@@ -115,42 +114,42 @@ const UploadOrEditVideoForm = ({
       return;
     }
 
-    let videoData: any = {};
+    const formData = new FormData();
     let uri = `${API_URL}/api/v1/videos`;
 
     if (edit && videoDetails) {
-    videoData = {
-      title: title as string,
-      description: description as string,
-      channel_id: Number(selectedChannel),
-      video: video as File || null,
-      thumbnail: thumbnail as File || null,
-    };
+    // multipart form data
+    formData.append("title", title as string);
+    formData.append("description", description as string);
+    formData.append("channel_id", selectedChannel);
+    formData.append("video", video as File);
+    formData.append("thumbnail", thumbnail as File);
+
     uri = `${API_URL}/api/v1/videos/${videoDetails.id}`;
 
     } else {
-      videoData = {
-        title: title as string,
-        description: description as string,
-        channel_id: Number(selectedChannel),
-        video: video as File,
-        thumbnail: thumbnail as File,
-      };
+      formData.append("title", title as string);
+      formData.append("description", description as string);
+      formData.append("channel_id", selectedChannel);
+      formData.append("video", video as File);
+      formData.append("thumbnail", thumbnail as File);
     }
 
 
     try {
       setPending(true);
-      const response = await axios.post(uri, videoData, {
+      const response = await axios.post(uri, formData, {
         headers: {
-          "Authorization": `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
+          "Content-Type": "multipart/form-data",
+          },
+          } );
+      console.log(response.data)
 
     } catch (error: any) {
       console.log(error);
       const status = error && error.response ? error.response.status : 500;
       const msg = error && error.response ? error.response.data.error : "Something went wrong";
+      console.log(error.response.data)
 
         switch (status) {
           case 401:
@@ -171,17 +170,19 @@ const UploadOrEditVideoForm = ({
     } finally {
       setPending(false);
     }
-
-
-    
-
-
   };
 
   // load channels
   const { loading: chanLoading, data: chanData } = useFetchData<ChannelData>(
     `${API_URL}/api/v1/channels`
-  ); 
+  );
+
+  // set channels
+  useEffect(() => {
+    if(!edit && chanData && chanData.channels && chanData.channels.length > 0) {
+      setSelectedChannel(chanData.channels[0].id.toString())
+    }
+  }, [chanData, edit])
 
 
   let videoPreviewContent = useMemo(() => {
@@ -348,7 +349,7 @@ const UploadOrEditVideoForm = ({
       />
 
       <Button disabled={!formIsValid} type="submit" btnClass="w-full py-3 mt-4">
-        {pending? 'submitting...' : edit? 'Upload Video': 'Edit Video'}
+        {pending? 'submitting...' : edit? 'Edit Video': 'Upload Video'}
       </Button>
     </form>
   );
