@@ -98,15 +98,16 @@ const CreateORUpdateChannelForm = ({
 
   const formSubmitHandler = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    
+
+    const API_URL = process.env.NEXT_PUBLIC_API_URL;
+
     if (!isFormValid) return;
-    console.log("form submitted")
 
     const formData = new FormData();
     formData.append("title", title as string);
     formData.append("description", description as string);
     formData.append("logo", logo as File);
-    const url = edit ? `/api/v1/channels/${chanId}` : "/api/v1/channels";
+    const url = edit ? `${API_URL}/api/v1/channels/${chanId}` : `${API_URL}/api/v1/channels`;
 
     try {
       if (edit) {
@@ -124,14 +125,19 @@ const CreateORUpdateChannelForm = ({
           },
         });
 
-        const { data } = res.data;
-        console.log(data);
-        router.push(`/channels/${data.id}`);
+        const channelID = res.data.channel_id;
+        if (channelID) {
+          router.push(`/channels/${channelID}`);
+        }
+        else {
+          setError("Something went wrong! please try again later.");
+        }
       }
     } catch (err: any) {
       const status = err.response.status || 500;
-      const errMsg = err.response.data.error || "Something went wrong! please try again later.";
-      console.log(errMsg)
+      const errMsg =
+        err.response.data.error ||
+        "Something went wrong! please try again later.";
 
       if (status === 403) {
         router.push("/access-denied");
@@ -178,6 +184,10 @@ const CreateORUpdateChannelForm = ({
       );
     }
   }, [logo, logoError, chanLogo]);
+
+  if (error) {
+    return <ErrorModal errMsg={error} tryAgainHandler={() => setError(null)} />;
+  }
 
   return (
     <form

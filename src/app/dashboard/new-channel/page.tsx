@@ -7,7 +7,6 @@ type PropsType = {
 
 const page = async ({ searchParams }: PropsType) => {
   const channelId = parseInt(searchParams["edit"] as string)
-  console.log(channelId)
   if (!isNaN(channelId)) {
     const channel = await getSingleChannel(channelId);
 
