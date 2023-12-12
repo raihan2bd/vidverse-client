@@ -15,7 +15,10 @@
     "react": "^18",
     "react-dom": "^18",
     "react-icons": "^4.11.0",
-    "react-intersection-observer": "^9.5.3"
+    "react-intersection-observer": "^9.5.3",
+    "reconnecting-websocket": "^4.4.0",
+    "socket.io": "^4.7.2",
+    "socket.io-client": "^4.7.2"
   },
   "devDependencies": {
     "@types/node": "^20",

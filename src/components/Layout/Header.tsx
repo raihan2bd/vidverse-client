@@ -8,6 +8,7 @@ import { BiSearch } from "react-icons/bi";
 import { BsArrowLeftShort } from "react-icons/bs";
 
 import SearchForm from "../SearchForm/SearchForm";
+import NotificationIcon from "./Notification/NotificationIcon";
 
 interface PropsTypes {
   showSideBar: boolean;
@@ -67,6 +68,9 @@ const Header = ({ onSetShowSideBar, showSideBar }: PropsTypes) => {
       </div>
       <nav>
         <ul>
+          <li>
+            <NotificationIcon />
+          </li>
           <li>
             <LoginButton />
           </li>
