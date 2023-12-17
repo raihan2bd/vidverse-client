@@ -5,10 +5,14 @@ import axios from "axios";
 import useInput from "@/hooks/useInput";
 import Input from "@/components/UI/input";
 import Button from "@/components/UI/Button";
-import { validateInput, ValidationResultType } from "@/utils/validator";
+import { validateInput } from "@/utils/validator";
+import { useRouter, useSearchParams } from "next/navigation";
 
 const Signup = () => {
   const [showPass, setShowPass] = useState(false);
+  const router = useRouter();
+  const query = useSearchParams()
+  const callbackUrl = query.get('callback') || "/";
 
   const {
     value: name,
@@ -51,18 +55,20 @@ const Signup = () => {
 
   const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    if (!isFormValid) return;
     try {
-      axios.defaults.withCredentials = true;
-
+      const API_URL = process.env.NEXT_PUBLIC_API_URL;
       const res = await axios.post(
-        "http://localhost:4000/api/v1/auth/signup",
-        {}
+        `${API_URL}/api/v1/auth/signup`,
+        {
+          name,
+          email,
+          password,
+        }
       );
-      // const result = await res.json()
-      // console.log(result)
-      console.log(res.data);
-    } catch (error) {
-      console.log(error);
+      router.push(`/login?callback=${callbackUrl}`)
+    } catch (error: any) {
+      console.log(error.response.data);
     }
   };
 
