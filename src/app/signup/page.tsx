@@ -7,12 +7,14 @@ import Input from "@/components/UI/input";
 import Button from "@/components/UI/Button";
 import { validateInput } from "@/utils/validator";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useGlobalState } from "@/context/store";
 
 const Signup = () => {
   const [showPass, setShowPass] = useState(false);
   const router = useRouter();
   const query = useSearchParams()
   const callbackUrl = query.get('callback') || "/";
+  const { setError, setLoading, setSuccess} = useGlobalState();
 
   const {
     value: name,
@@ -55,10 +57,11 @@ const Signup = () => {
 
   const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    setLoading(true);
     if (!isFormValid) return;
     try {
       const API_URL = process.env.NEXT_PUBLIC_API_URL;
-      const res = await axios.post(
+      await axios.post(
         `${API_URL}/api/v1/auth/signup`,
         {
           name,
@@ -66,9 +69,11 @@ const Signup = () => {
           password,
         }
       );
+      setSuccess("Signup successful, please login to continue")
       router.push(`/login?callback=${callbackUrl}`)
     } catch (error: any) {
-      console.log(error.response.data);
+      const msg = error.response?.data?.error || error.message || "Something went wrong, please try again!";
+      setError(msg);
     }
   };
 
