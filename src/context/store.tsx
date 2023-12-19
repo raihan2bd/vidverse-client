@@ -104,7 +104,7 @@ export const WebSocketProvider = ({ children }: { children: ReactNode }) => {
       if (!session) return;
       if (socket) return;
       const newSocket = new ReconnectingWebSocket(
-        `${SOCKET_URL}/api/v1/ws?token=${token}`,
+        `ws://${SOCKET_URL}/api/v1/ws?token=${token}`,
         [],
         {
           debug: true,
