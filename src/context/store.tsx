@@ -41,7 +41,7 @@ export const WebSocketProvider = ({ children }: { children: ReactNode }) => {
   const [socket, setSocket] = React.useState<ReconnectingWebSocket | null>(
     null
   );
-  const [notifications, setNotifications] = useState<any>([]);
+  const [notifications, setNotifications] = useState<any | null>(null);
   const [uiState, setUiState] = useState<UIState>({
     success: false,
     error: false,
@@ -122,8 +122,9 @@ export const WebSocketProvider = ({ children }: { children: ReactNode }) => {
     if (!socket) return;
     socket.onmessage = (messageEvent) => {
       const data: any = JSON.parse(messageEvent.data);
+      console.log('data-action', data.action)
       switch (data.action) {
-        case "notification":
+        case "notifications":
           setNotifications(data.data);
           break;
         case "a_new_notification":
