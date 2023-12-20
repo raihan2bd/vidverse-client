@@ -1,21 +1,28 @@
 "use client"
 
+import Button from "@/components/UI/Button"
 import { useGlobalState } from "@/context/store"
 import { useState } from "react"
+import { IoMdNotifications } from "react-icons/io";
 
 const API_URL = process.env.NEXT_PUBLIC_SOCKET_API
 const NotificationIcon = () => {
-  const notifications = useGlobalState().notifications
+  const {notifications} = useGlobalState()
   const [showNotification, setShowNotification] = useState(false)
-  const [loading, setLoading] = useState(true)
+  
 
-  if (notifications.length > 0) {
-    console.log(notifications)
-  }
+  const spinner = <span className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></span>
 
-  const spinner = <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-
-  return <div>{spinner}</div>
+  return (
+    <div className="relative p-2 flex justify-center items-center">
+      {notifications ? <Button
+      type="button"
+        className="block rounded-full overflow-hidden focus:outline-none text-2xl"
+        onClick={() => setShowNotification(!showNotification)}>
+          <IoMdNotifications />
+        </Button>: spinner}
+      </div>
+  )
 }
 
 export default NotificationIcon
