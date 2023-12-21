@@ -13,6 +13,9 @@ import axios, { Axios, AxiosError } from "axios";
 import { useRouter } from "next/navigation";
 import ErrorModal from "../UI/ErrorModal";
 import Spinner from "../UI/Spinner";
+import { useSession } from "next-auth/react";
+import { PassThrough } from "stream";
+import { useGlobalState } from "@/context/store";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -35,11 +38,10 @@ type PropsType = {
   edit?: boolean;
 };
 
-const UploadOrEditVideoForm = ({
-  videoDetails,
-  edit=false
-}: PropsType) => {
+const UploadOrEditVideoForm = ({ videoDetails, edit = false }: PropsType) => {
   // state to submit form
+  const { data: session } = useSession();
+  const { setSuccess } = useGlobalState();
   const [pending, setPending] = useState<boolean>(false);
   const [hasError, setHasError] = useState<string | null>(null);
   const router = useRouter();
@@ -52,9 +54,15 @@ const UploadOrEditVideoForm = ({
     inputBlurHandler: titleBlurHandler,
     reset: resetTitle,
     setValue: setTitle,
-  } = useDynamicInput((value) =>
-    validateInput(value, { inputType: "string", minLength: 6, maxLength: 255 })
-  , videoDetails?.title || "");
+  } = useDynamicInput(
+    (value) =>
+      validateInput(value, {
+        inputType: "string",
+        minLength: 6,
+        maxLength: 255,
+      }),
+    videoDetails?.title || ""
+  );
 
   const validateThumbnailInput = (value: File | null) => {
     const thumbnail = validateImage(value);
@@ -92,24 +100,54 @@ const UploadOrEditVideoForm = ({
     inputBlurHandler: descriptionBlurHandler,
     reset: resetDescription,
     setValue: setDescription,
-  } = useDynamicInput((value) =>
-    validateInput(value, { inputType: "string", minLength: 6, maxLength: 255 }), videoDetails?.description || ""
+  } = useDynamicInput(
+    (value) =>
+      validateInput(value, {
+        inputType: "string",
+        minLength: 6,
+        maxLength: 255,
+      }),
+    videoDetails?.description || ""
   );
 
-  const [selectedChannel, setSelectedChannel] = useState<string>(videoDetails?.channel_id.toString() || "");
+  const [selectedChannel, setSelectedChannel] = useState<string>(
+    videoDetails?.channel_id.toString() || ""
+  );
   const changeChannelHandler = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedChannel(e.target.value);
   };
 
   let formIsValid = false;
-  if(edit) {
-    formIsValid = !titleError && !descriptionError && selectedChannel !== "" && (titleIsTouched || isVideoTouched || descriptionIsTouched || isThumbnailTouched)
+  if (edit) {
+    formIsValid =
+      !titleError &&
+      !descriptionError &&
+      selectedChannel !== "" &&
+      (titleIsTouched ||
+        isVideoTouched ||
+        descriptionIsTouched ||
+        isThumbnailTouched);
   } else {
-    formIsValid = !titleError && !videoError && !descriptionError && !thumbnailError && selectedChannel !== "" && titleIsTouched && isVideoTouched && descriptionIsTouched && isThumbnailTouched;
+    formIsValid =
+      !titleError &&
+      !videoError &&
+      !descriptionError &&
+      !thumbnailError &&
+      selectedChannel !== "" &&
+      titleIsTouched &&
+      isVideoTouched &&
+      descriptionIsTouched &&
+      isThumbnailTouched;
   }
 
   const submitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    e.stopPropagation();
+    const token = session?.token || null;
+
+    if (!token && session?.user.user_role !== "admin" && !token) {
+      throw new Error("You are not authorized to access this resource");
+    }
     if (!formIsValid) {
       return;
     }
@@ -118,15 +156,14 @@ const UploadOrEditVideoForm = ({
     let uri = `${API_URL}/api/v1/videos`;
 
     if (edit && videoDetails) {
-    // multipart form data
-    formData.append("title", title as string);
-    formData.append("description", description as string);
-    formData.append("channel_id", selectedChannel);
-    formData.append("video", video as File);
-    formData.append("thumbnail", thumbnail as File);
+      // multipart form data
+      formData.append("title", title as string);
+      formData.append("description", description as string);
+      formData.append("channel_id", selectedChannel);
+      formData.append("video", video as File);
+      formData.append("thumbnail", thumbnail as File);
 
-    uri = `${API_URL}/api/v1/videos/${videoDetails.id}`;
-
+      uri = `${API_URL}/api/v1/videos/${videoDetails.id}`;
     } else {
       formData.append("title", title as string);
       formData.append("description", description as string);
@@ -135,38 +172,52 @@ const UploadOrEditVideoForm = ({
       formData.append("thumbnail", thumbnail as File);
     }
 
-
     try {
       setPending(true);
       const response = await axios.post(uri, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
-          },
-          } );
-      console.log(response.data)
+          Authorization: token,
+        },
+      });
 
+      if (response.data.video_id) {
+        setSuccess("Video uploaded successfully");
+        router.push(`/videos/${response.data.video_id}`);
+      } else if (videoDetails?.id) {
+        setSuccess("Video updated successfully");
+        router.push(`/videos/${videoDetails.id}`);
+      } else {
+        setSuccess("Video updated successfully");
+        router.push(`/videos`);
+      }
+      
     } catch (error: any) {
       console.log(error);
       const status = error && error.response ? error.response.status : 500;
-      const msg = error && error.response ? error.response.data.error : "Something went wrong";
-      console.log(error.response.data)
+      const msg =
+        error && error.response
+          ? error.response.data.error
+          : error.message
+          ? error.message
+          : "Something went wrong";
 
-        switch (status) {
-          case 401:
-           setHasError("Failed to authenticate");
-           router.push("/login");
-            break;
-          case 403:
-            setHasError("You are not authorized to access this resource");
-            router.push("/access-denied");
-            break;
-          case 404:
-            setHasError(msg);
-            break;
-          default:
-            setHasError("Something went wrong. please try again later.");
-            break;
-        }
+      switch (status) {
+        case 401:
+          setHasError("Failed to authenticate");
+          router.push("/login");
+          break;
+        case 403:
+          setHasError("You are not authorized to access this resource");
+          router.push("/access-denied");
+          break;
+        case 404:
+          setHasError(msg);
+          break;
+        default:
+          setHasError("Something went wrong. please try again later.");
+          break;
+      }
     } finally {
       setPending(false);
     }
@@ -179,11 +230,15 @@ const UploadOrEditVideoForm = ({
 
   // set channels
   useEffect(() => {
-    if(!edit && chanData && chanData.channels && chanData.channels.length > 0) {
-      setSelectedChannel(chanData.channels[0].id.toString())
+    if (
+      !edit &&
+      chanData &&
+      chanData.channels &&
+      chanData.channels.length > 0
+    ) {
+      setSelectedChannel(chanData.channels[0].id.toString());
     }
-  }, [chanData, edit])
-
+  }, [chanData, edit]);
 
   let videoPreviewContent = useMemo(() => {
     if (video && !videoError) {
@@ -194,7 +249,7 @@ const UploadOrEditVideoForm = ({
           controls
         ></video>
       );
-    } else if(videoDetails?.vid_src) {
+    } else if (videoDetails?.vid_src) {
       return (
         <video
           className="rounded max-h-[100%] max-w-[100%] border"
@@ -224,7 +279,7 @@ const UploadOrEditVideoForm = ({
           height={150}
         />
       );
-    } else if(videoDetails?.thumb) {
+    } else if (videoDetails?.thumb) {
       return (
         <img
           className="rounded max-h-[100%] max-w-[100%] border mx-auto"
@@ -247,18 +302,17 @@ const UploadOrEditVideoForm = ({
     }
   }, [thumbnail, thumbnailError]);
 
-  if(pending) {
+  if (pending) {
     return (
       <div className="bg-black/25 w-[100vw] overflow-hidden max-w-[100%] h-screen flex justify-center items-center">
         <Spinner />
       </div>
     );
-
   }
 
-  if(hasError) {
+  if (hasError) {
     return (
-      <ErrorModal errMsg={hasError} tryAgainHandler={() => setHasError(null) } />
+      <ErrorModal errMsg={hasError} tryAgainHandler={() => setHasError(null)} />
     );
   }
 
@@ -349,7 +403,7 @@ const UploadOrEditVideoForm = ({
       />
 
       <Button disabled={!formIsValid} type="submit" btnClass="w-full py-3 mt-4">
-        {pending? 'submitting...' : edit? 'Edit Video': 'Upload Video'}
+        {pending ? "submitting..." : edit ? "Edit Video" : "Upload Video"}
       </Button>
     </form>
   );
