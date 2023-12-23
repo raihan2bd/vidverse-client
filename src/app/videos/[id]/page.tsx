@@ -7,6 +7,9 @@ import Comments from "@/components/Videos/Comments";
 import Button from "@/components/UI/Button";
 import PageNotFound from "@/components/UI/PageNotFound";
 import defaultThumb from "../../../../public/images/default-thumb.jpg";
+import { getServerSession,  } from "next-auth/next"
+import {authOptions} from '../../api/auth/[...nextauth]/route'
+import Subscribe from "@/components/Videos/Subscibe";
 
 type Props = {
   params: {
@@ -18,7 +21,10 @@ const Video = async ({ params: { id } }: Props) => {
   const videoId = parseInt(id);
   if (isNaN(videoId)) return <PageNotFound />;
 
-  const video = await getSingleVideo(videoId);
+  const session = await getServerSession(authOptions)
+  const token = session?.token || ""
+
+  const video = await getSingleVideo(videoId, token);
   console.log(video)
 
   return (
@@ -37,14 +43,15 @@ const Video = async ({ params: { id } }: Props) => {
           <div className="flex gap-3 items-center text-sm">
             <img className="rounded-full border border-violet-800 p-[3px]" src={defaultThumb.src} alt="" width={42} height={42} />
             <Link className="flex flex-col gap-1 text-sky-500 font-bold" href={`/channel/${video.channel.id}`}>{video.channel.title}
-            <span className="block text-xs font-normal text-gray-500">1M Subscribers</span>
+            <span className="block text-xs font-normal text-gray-500">{video.channel.subscriptions? video.channel.subscriptions: 0} Subscribers</span>
             </Link>
           </div>
-          <Button className="bg-red-600 text-sm p-2 rounded-2xl text-white border-0">Subscribe</Button>
-          <Button className="text-sm flex gap-1 items-center border border-1 border-violet-800 text-violet-800 p-2 rounded-2xl hover:bg-violet-800 hover:text-white"><span className="text-xl"><GoThumbsup /></span> 1.2M</Button>
+
+          <Subscribe is_subscribed={video.channel.is_subscribed} channel_id={video.channel.id} />
+          <Button className="text-sm flex gap-1 items-center border border-1 border-violet-800 text-violet-800 p-2 rounded-2xl hover:bg-violet-800 hover:text-white"><span className="text-xl"><GoThumbsup /></span> {video.likes}</Button>
         </div>
         
-        <p>{video.description}</p>
+        <p className="p-4">{video.description}</p>
 
         <Comments id={videoId} views={video.views} />
       </article>

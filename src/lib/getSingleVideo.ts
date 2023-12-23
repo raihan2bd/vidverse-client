@@ -1,6 +1,7 @@
-export default async (id: number,) => {
+export default async (id: number, token: string) => {
+  console.log(token);
   const apiUrl = process.env.NEXT_API_URL;
-  const response = await fetch(`${apiUrl}/api/v1/videos/${id}`, { cache: 'no-store' });
+  const response = await fetch(`${apiUrl}/api/v1/videos/${id}`, { cache: 'no-store', headers: { Authorization: token } });
   if(!response.ok) {
     if(response.status === 401) {
       // Logout the current user
