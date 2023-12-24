@@ -21,7 +21,6 @@ const Subscribe = ({ is_subscribed, channel_id }: Props) => {
   const router = useRouter();
   const { setError } = useGlobalState();
   const pathName = usePathname();
-  console.log(isSubscribed, "isSubscribe")
 
   const handleSubscribe = async () => {
     if (!session || !session.user || !session.token) {
