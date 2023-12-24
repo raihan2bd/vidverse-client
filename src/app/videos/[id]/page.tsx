@@ -1,5 +1,4 @@
 import Link  from "next/link";
-import { GoThumbsup, GoThumbsdown  } from "react-icons/go";
 
 import getSingleVideo from "@/lib/getSingleVideo";
 import RelatedVideos from "@/components/Videos/RelatedVideos";
@@ -10,6 +9,7 @@ import defaultThumb from "../../../../public/images/default-thumb.jpg";
 import { getServerSession,  } from "next-auth/next"
 import {authOptions} from '../../api/auth/[...nextauth]/route'
 import Subscribe from "@/components/Videos/Subscibe";
+import Like from '@/components/Videos/Like'
 
 type Props = {
   params: {
@@ -48,7 +48,8 @@ const Video = async ({ params: { id } }: Props) => {
           </div>
 
           <Subscribe is_subscribed={video.channel.is_subscribed} channel_id={video.channel.id} />
-          <Button className="text-sm flex gap-1 items-center border border-1 border-violet-800 text-violet-800 p-2 rounded-2xl hover:bg-violet-800 hover:text-white"><span className="text-xl"><GoThumbsup /></span> {video.likes}</Button>
+          <Like is_liked={video.is_liked} likesCount={video.likes} video_id={video.id} />
+          
         </div>
         
         <p className="p-4">{video.description}</p>

@@ -21,6 +21,7 @@ const NotificationIcon = () => {
         onClick={() => setShowNotification(!showNotification)}>
           <IoMdNotifications />
         </Button>: spinner}
+        {notifications && notifications.length > 0 && <span className="absolute top-[2px] right-[2px] bg-red-500 text-white text-xs rounded-full px-1">{notifications.length}</span>}
       </div>
   )
 }
