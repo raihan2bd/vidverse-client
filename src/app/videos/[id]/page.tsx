@@ -2,7 +2,7 @@ import Link  from "next/link";
 
 import getSingleVideo from "@/lib/getSingleVideo";
 import RelatedVideos from "@/components/Videos/RelatedVideos";
-import Comments from "@/components/Videos/Comments";
+import CommentList from "@/components/Videos/Comments/CommentList";
 import Button from "@/components/UI/Button";
 import PageNotFound from "@/components/UI/PageNotFound";
 import defaultThumb from "../../../../public/images/default-thumb.jpg";
@@ -54,7 +54,7 @@ const Video = async ({ params: { id } }: Props) => {
         
         <p className="p-4">{video.description}</p>
 
-        <Comments id={videoId} views={video.views} />
+        <CommentList id={videoId} views={video.views} />
       </article>
 
       <aside className="md:ms-4 flex-auto flex-shrink-1 w-[100%] md:w-[280px] max-w-[100%]">

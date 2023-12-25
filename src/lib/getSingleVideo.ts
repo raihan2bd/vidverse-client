@@ -1,5 +1,4 @@
 export default async (id: number, token: string) => {
-  console.log(token);
   const apiUrl = process.env.NEXT_API_URL;
   const response = await fetch(`${apiUrl}/api/v1/videos/${id}`, { cache: 'no-store', headers: { Authorization: token } });
   if(!response.ok) {

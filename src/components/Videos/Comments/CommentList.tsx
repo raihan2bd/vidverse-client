@@ -1,25 +1,40 @@
 "use client";
 
-import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
-import Button from "../UI/Button";
+import Button from "@/components/UI/Button";
+import { useGlobalState } from "@/context/store";
+import axios from "axios";
+import { useSession } from "next-auth/react";
+import Spinner from "@/components/UI/Spinner";
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 const Comments = ({ id, views }: {id: number, views: number}) => {
   const [comments, setComments] = useState<CommentType[]>([]);
   const [loading, setLoading] = useState(false);
-  const [hasError, setHasError] = useState<null | string>(null)
   const router = useRouter();
+  const pathName = usePathname();
+  const {setError} = useGlobalState();
+  const {data: session} = useSession();
+
+  const handleAddComment = () => {}
+  const handleDeleteComment = () => {}
+
 
   useEffect(() => {
     const fetchComments = async () => {
       try {
         setLoading(true)
-        const response = await fetch(`http://localhost:3000/comments/${id}`);
-        const data = await response.json();
+        const response = await axios.get(`${API_URL}/api/v1/comments/${id}`);
+        const { data } = response;
+        console.log(data)
         setComments(data);
-      } catch(err) {
-        setHasError("something went wrong. please try again.")
+      } catch(err: any) {
+        console.log(err)
+        const errMsg = err.response && err.response.data.message ? err.response.data.message : err.message ? err.message : "Something went wrong";
+        setError(errMsg)
+        
       } finally {
         setLoading(false)
       }
@@ -28,12 +43,11 @@ const Comments = ({ id, views }: {id: number, views: number}) => {
   }, [id]);
   
   let commentsContent: any 
-  if (hasError) {
-    commentsContent =  <p className="bg-red-200 text-red-600 p-4">{hasError} <Button btnClass="ms-4" onClick={() => router.refresh}>Try Again!</Button></p>
-  }
 
   if (loading) {
-    commentsContent =  <div className="h-[100px] w-[100%]">Loading...</div>;
+    commentsContent =  <div className="h-[100px] w-[100%] flex justify-center items-center">
+      <Spinner />
+    </div>;
   }
 
   if(comments.length > 0) {
