@@ -99,24 +99,19 @@ export const WebSocketProvider = ({ children }: { children: ReactNode }) => {
   const { data: session } = useSession();
 
   useEffect(() => {
-    if (session) {
+    if (session && !socket) {
       const token = session.token;
-      if (!session) return;
-      if (socket) return;
       const newSocket = new ReconnectingWebSocket(
         `ws://${SOCKET_URL}/api/v1/ws?token=${token}`,
         [],
         {
           debug: true,
-          connectionTimeout: 3000,
           maxRetries: 5,
         }
       );
       setSocket(newSocket);
-
-      return () => newSocket.close();
     }
-  }, [session]);
+  }, [session, socket]);
 
   useEffect(() => {
     if (!socket) return;
@@ -138,6 +133,33 @@ export const WebSocketProvider = ({ children }: { children: ReactNode }) => {
           break;
       }
     };
+
+    if (typeof window !== "undefined") {
+      window.onbeforeunload = function () {
+        if (!socket) return
+        const wsPayload = {
+          action: "close",
+        };
+        socket.send(JSON.stringify(wsPayload));
+      };
+    };
+
+    socket.onclose = () => {
+      setSocket(null);
+      if (!notifications ) {
+        setNotifications([])
+      }
+    }
+
+    socket.onerror = (error) => {
+      console.log("Socket error", error);
+      socket.close();
+      setSocket(null);
+      if (!notifications ) {
+        setNotifications([])
+      }
+    };
+
   }, [socket]);
 
   useEffect(() => {
