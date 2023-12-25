@@ -10,7 +10,8 @@ interface VideoType {
 
 interface CommentType {
   id: number;
-  name: string;
+  user_id: number;
+  user_name: string;
   avatar: string;
   comment: string;
   channel_id?: number;
