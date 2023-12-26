@@ -8,6 +8,8 @@ import axios from "axios";
 import { useSession } from "next-auth/react";
 import Spinner from "@/components/UI/Spinner";
 import CommentForm from "./CommentForm";
+import { convertTime } from "@/utils/convertTime";
+import CommentItem from "./CommentItem";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -31,7 +33,7 @@ const Comments = ({ id, views }: { id: number; views: number }) => {
       setIsFormLoading(true);
       const response = await axios.post(
         `${API_URL}/api/v1/comments`,
-        { comment: value, video_id: id },
+        { text: value, video_id: id },
         {
           headers: {
             Authorization: token,
@@ -43,10 +45,11 @@ const Comments = ({ id, views }: { id: number; views: number }) => {
       const { id:comment_id } = response.data;
       const newComment: CommentType = {
         id: comment_id,
-        comment: value,
+        text: value,
         user_id: session.user.id,
         user_name: session.user.user_name,
-        avatar: "https://upload.wikimedia.org/wikipedia/commons/5/59/User-avatar.svg"
+        user_avatar: session.user.avatar,
+        created_at: new Date().toISOString(),
       };
       
       setComments((prev: CommentType[]) => [newComment, ...prev]);
@@ -66,6 +69,7 @@ const Comments = ({ id, views }: { id: number; views: number }) => {
 
 
   const handleDeleteComment = () => {};
+  const handleEditComment = () => {};
 
   useEffect(() => {
     const fetchComments = async () => {
@@ -73,8 +77,8 @@ const Comments = ({ id, views }: { id: number; views: number }) => {
         setLoading(true);
         const response = await axios.get(`${API_URL}/api/v1/comments/${id}`);
         const { data } = response;
-        console.log(data);
-        setComments(data);
+        console.log(data)
+        setComments(data.comments);
       } catch (err: any) {
         console.log(err);
         const errMsg =
@@ -103,19 +107,7 @@ const Comments = ({ id, views }: { id: number; views: number }) => {
 
   if (comments.length > 0) {
     commentsContent = comments.map((comment: CommentType) => (
-      <li key={comment.id} className="flex gap-2 bg-white rounded-lg p-4">
-        <img
-          className="rounded-full"
-          src={comment.avatar}
-          alt=""
-          width={40}
-          height={40}
-        />
-        <div className="flex flex-col gap-1 flex-auto">
-          <h4 className="text-md font-bold text-violet-800">{comment.user_name}</h4>
-          <p className="text-sm text-gray-700">{comment.comment}</p>
-        </div>
-      </li>
+      <CommentItem key={comment.id} comment={comment}  onDeleteComment={handleDeleteComment} onEditComment={handleEditComment} userID={session?.user.id? session.user.id: 0}/>
     ));
   } else {
     commentsContent = (
