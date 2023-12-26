@@ -9,12 +9,15 @@ import Footer from "./Footer";
 import { useGlobalState } from "@/context/store";
 import Spinner from "../UI/Spinner";
 import ToastMessage from "../UI/ToastMessage";
+import { useSession } from "next-auth/react";
 
 interface PropTypes {
   children: ReactNode;
 }
 
 const UILayout = ({ children }: PropTypes) => {
+  const { status } = useSession();
+
   const [showSideBar, setShowSideBar] = useState(false);
   const pathname = usePathname();
   const params = useParams();
@@ -63,6 +66,12 @@ const UILayout = ({ children }: PropTypes) => {
       : "hidden";
 
     mainContentCls = "w-full";
+  }
+
+  if (status === "loading") {
+    return <div className="flex justify-center items-center w-full h-screen">
+      <Spinner />
+    </div>
   }
 
   return (
