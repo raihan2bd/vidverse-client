@@ -12,9 +12,10 @@ interface CommentType {
   id: number;
   user_id: number;
   user_name: string;
-  avatar: string;
-  comment: string;
+  user_avatar: string;
+  text: string;
   channel_id?: number;
+  created_at: string;
 }
 
 type VideoFromDetails = {
