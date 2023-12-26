@@ -9,7 +9,6 @@ import { BsArrowLeftShort } from "react-icons/bs";
 
 import SearchForm from "../SearchForm/SearchForm";
 import NotificationIcon from "./Notification/NotificationIcon";
-import { useGlobalState } from "@/context/store";
 import { useSession } from "next-auth/react";
 
 interface PropsTypes {
