@@ -10,6 +10,7 @@ import { getServerSession,  } from "next-auth/next"
 import {authOptions} from '../../api/auth/[...nextauth]/route'
 import Subscribe from "@/components/Videos/Subscibe";
 import Like from '@/components/Videos/Like'
+import ResizeText from "@/components/Videos/ResizeText";
 
 type Props = {
   params: {
@@ -52,7 +53,11 @@ const Video = async ({ params: { id } }: Props) => {
           
         </div>
         
-        <p className="p-4">{video.description}</p>
+        <p className="max-w-[100%] text-gray-700 p-4" style={{
+            overflowWrap: 'break-word',
+            wordWrap: 'break-word',
+            width: '100%'
+          }}><ResizeText text={video.description} maxLen={150} /></p>
 
         <CommentList id={videoId} views={video.views} />
       </article>

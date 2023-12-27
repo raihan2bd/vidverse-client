@@ -8,7 +8,6 @@ interface VideoItemProps {
 }
 
 const VideoItem = ({ video }: VideoItemProps) => {
-  const title = "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Veniam iusto hic modi, debitis impedit quaerat maiores quas sunt eligendi esse necessitatibus, magni velit aliquid expedita amet minus? Doloribus, rem tenetur?"
   return (
     <li className="w-[100%] sm:w-[48%] lg:w-[32%] max-w-[100%] shrink-1 rounded bg-white p-2 shadow-md flex flex-col justify-between gap-2">
       <div>
