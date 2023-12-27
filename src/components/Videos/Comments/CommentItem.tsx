@@ -1,5 +1,6 @@
 "use client";
 import { convertTime } from "@/utils/convertTime";
+import ResizeText from "../ResizeText";
 
 type Props = {
   comment: CommentType;
@@ -20,7 +21,7 @@ const CommentItem = ({ comment, userID, onDeleteComment, onEditComment }: Props)
   };
 
   return (
-    <li key={id} className="flex gap-2 bg-white rounded-lg p-4">
+    <li key={id} className="flex gap-2 bg-white rounded-lg p-4 items-start">
         <img
           className="rounded-full bg-gray-300 border-1 border-violet-950 p-1"
           src={user_avatar}
@@ -28,9 +29,13 @@ const CommentItem = ({ comment, userID, onDeleteComment, onEditComment }: Props)
           width={40}
           height={40}
         />
-        <div className="flex flex-col gap-1 flex-auto">
+        <div className="flex flex-col gap-1 flex-auto overflow-hidden">
           <h4 className="text-sm font-bold text-violet-800">{user_name} <span className="text-xs text-gray-500 ps-1 font-normal">{convertTime(created_at)}</span></h4>
-          <p className="text-sm text-gray-700">{text}</p>
+          <p className="max-w-[100%] text-sm text-gray-700" style={{
+            overflowWrap: 'break-word',
+            wordWrap: 'break-word',
+            width: '100%'
+          }}><ResizeText text={text} maxLen={100} /></p>
         </div>
       </li>
   );
