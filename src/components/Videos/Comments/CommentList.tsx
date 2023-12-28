@@ -23,10 +23,11 @@ const Comments = ({ id, views }: { id: number; views: number }) => {
 
   const [loading, setLoading] = useState(false);
   const [isFormLoading, setIsFormLoading] = useState(false);
+  const [deleteLoading, setDeleteLoading] = useState(false);
 
   const router = useRouter();
   const pathName = usePathname();
-  const { setError } = useGlobalState();
+  const { setError, setSuccess } = useGlobalState();
   const { data: session } = useSession();
 
   const fetchComments = async (fetchMore=false, setLoading: Dispatch<SetStateAction<boolean>>, pageNo=1) => {
@@ -101,19 +102,9 @@ const Comments = ({ id, views }: { id: number; views: number }) => {
         }
       );
 
-      const { id:comment_id } = response.data;
-      const newComment: CommentType = {
-        id: comment_id,
-        text: value,
-        user_id: session.user.id,
-        user_name: session.user.user_name,
-        user_avatar: session.user.avatar,
-        created_at: new Date().toISOString(),
-      };
-      
-      setComments((prev: CommentType[]) => [newComment, ...prev]);
+      fetchComments(false, setLoading);
+      setSuccess("Comment added successfully");
     } catch (err: any) {
-      console.log(err);
       const errMsg =
         err.response && err.response.data && err.response.data.error
           ? err.response.data.error
@@ -127,11 +118,45 @@ const Comments = ({ id, views }: { id: number; views: number }) => {
   };
 
 
-  const handleDeleteComment = (commentId: number) => {
-    setComments((prev: CommentType[]) => prev.filter((comment: CommentType) => comment.id !== commentId));
-    setTotalComments((prev: number) => prev - 1);
+  const handleDeleteComment = async (commentId: number) => {
+    if (!session || !session.token || !session.user) {
+      router.push(`/signin?callback=${pathName}`);
+      return;
+    }
+
+    const commentIndex = comments.findIndex((comment: CommentType) => comment.id === commentId);
+    if (commentIndex === -1) return;
+
+    if (comments[commentIndex].user_id !== session.user.id ) {
+      if (session.user.user_role !== "admin") {
+        setError("You are not authorized to delete this comment!!");
+        return;
+      }
+    }
+
+    try {
+      const token = session.token;
+      await axios.delete(`${API_URL}/api/v1/comments/delete-comment/${commentId}`, {
+        headers: {
+          Authorization: token,
+          "Content-Type": "application/json",
+        },
+      });
+      fetchComments(false, setLoading)
+      setSuccess("Comment deleted successfully");
+    } catch (err: any) {
+      const errMsg =
+        err.response && err.response.data && err.response.data.error
+          ? err.response.data.error
+          : err.message
+          ? err.message
+          : "Something went wrong";
+      setError(errMsg);
+    } finally {
+      setIsFormLoading(false);
+    }
   };
-  
+
   const handleEditComment = () => {};
 
   useEffect(() => {
@@ -150,7 +175,7 @@ const Comments = ({ id, views }: { id: number; views: number }) => {
 
   if (comments.length > 0) {
     commentsContent = comments.map((comment: CommentType) => (
-      <CommentItem key={comment.id} comment={comment}  onDeleteComment={handleDeleteComment} onEditComment={handleEditComment} userID={session?.user.id? session.user.id: 0}/>
+      <CommentItem formLoading={isFormLoading} key={comment.id} comment={comment}  onDeleteComment={handleDeleteComment} onEditComment={handleEditComment} user={session?.user? session.user : null}/>
     ));
   } else {
     commentsContent = (
