@@ -1,42 +1,48 @@
 "use client";
-
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 type Props = {
   text: string;
   maxLen: number;
+  cls?: string;
 };
 
-const ResizeText: React.FC<Props> = ({ text, maxLen }: Props) => {
-  const [showMore, setShowMore] = useState(false);
-  const [fullText, setFullText] = useState(text);
+const ResizeText: React.FC<Props> = ({
+  text,
+  maxLen,
+  cls = "text-sm text-violet-700 cursor-pointer ps-2 hover:text-grey-500",
+}) => {
+  const [showMore, setShowMore] = useState(text.length > maxLen);
   const [textToShow, setTextToShow] = useState(text.slice(0, maxLen));
 
-  const handleToggleText = () => {
+  const toggleShowMore = () => {
     setShowMore(!showMore);
-    if (!showMore) {
-      setShowMore(true);
-    } else {
-      setTextToShow(text.slice(0, maxLen));
-    }
+    setTextToShow(showMore ? text : text.slice(0, maxLen));
   };
 
+  useEffect(() => {
+    if (text.length > maxLen) {
+      setTextToShow(text.slice(0, maxLen));
+    } else {
+      setTextToShow(text);
+    }
+  }, [text]);
+
   return (
-   <>
-   {text.length > maxLen ? (
-    <span>
-      {showMore ? fullText : textToShow + " ..."}
-      <span
-        className="text-gray-500 cursor-pointer ps-2"
-        onClick={handleToggleText}
-      >
-        {showMore ? " show less" : " show more"}
-      </span>
-    </span>
-  ) : (
-    <span>{fullText}</span>
-  )}
-   </>
+    <>
+      {textToShow}
+      {showMore && text.length > maxLen ? (
+        <span className={cls} onClick={toggleShowMore}>
+          {" ..."} Show More
+        </span>
+      ) : (
+        text.length > maxLen && (
+          <span className={cls} onClick={toggleShowMore}>
+            Show Less
+          </span>
+        )
+      )}
+    </>
   );
 };
 
