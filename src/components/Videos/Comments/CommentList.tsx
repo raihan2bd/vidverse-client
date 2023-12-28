@@ -230,7 +230,12 @@ const Comments = ({ id, views }: { id: number; views: number }) => {
         }
       );
       
-      fetchComments(false, setLoading);
+      setComments((prev: CommentType[]) => {
+        const newComments = [...prev];
+        newComments[commentIndex].text = editedText;
+        return newComments;
+      });
+      
       setSuccess("Comment edited successfully");
     } catch (error: any) {
       const errMsg =

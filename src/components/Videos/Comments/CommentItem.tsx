@@ -1,10 +1,11 @@
 "use client";
 
-import { Dispatch, SetStateAction, useMemo, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useMemo, useState } from "react";
 import { convertTime } from "@/utils/convertTime";
 import ResizeText from "../ResizeText";
 import { FaRegTrashAlt } from "react-icons/fa";
 import { BiEdit } from "react-icons/bi";
+import ConfirmModal from "@/components/UI/ConfirmModal";
 
 type Props = {
   comment: CommentType;
@@ -15,7 +16,11 @@ type Props = {
     avatar: string;
   } | null;
   onDeleteComment: (id: number) => void;
-  onEditComment: (id: number, text: string, setIsEditing: Dispatch<SetStateAction<boolean>>) => void;
+  onEditComment: (
+    id: number,
+    text: string,
+    setIsEditing: Dispatch<SetStateAction<boolean>>
+  ) => void;
   formLoading: boolean;
 };
 
@@ -29,6 +34,7 @@ const CommentItem = ({
   const { id, user_id, user_name, user_avatar, text, created_at } = comment;
   const [isEditing, setIsEditing] = useState(false);
   const [editedText, setEditedText] = useState(text);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const handleDeleteComment = () => {
     onDeleteComment(id);
@@ -49,7 +55,6 @@ const CommentItem = ({
           onChange={(e) => setEditedText(e.target.value)}
         ></textarea>
         <div className="flex gap-4 w-fit ms-auto mt-2">
-          
           <button
             type="button"
             className="bg-red-500 text-white px-2 py-1 rounded-lg"
@@ -95,14 +100,14 @@ const CommentItem = ({
               width: "100%",
             }}
           >
-            {text}
+            <ResizeText text={text} maxLen={100} />
           </p>
-  
+
           {user && (user.id === user_id || user?.user_role === "admin") && (
-            <div className="absolute top-0 right-0 flex gap-2 text-sm text-gray-500">
+            <div className="absolute top-0 right-0 flex gap-2 text-base text-gray-500">
               <button
                 type="button"
-                onClick={handleDeleteComment}
+                onClick={() => setIsDeleting(true)}
                 className="hover:text-red-500"
                 disabled={formLoading}
               >
@@ -114,9 +119,18 @@ const CommentItem = ({
                 className="hover:text-red-500"
                 disabled={formLoading}
               >
-               <BiEdit />
+                <BiEdit />
               </button>
             </div>
+          )}
+          {isDeleting && (
+            <ConfirmModal
+              onCancel={() => setIsDeleting(false)}
+              onConfirm={handleDeleteComment}
+              title="Delete Comment"
+            >
+              Are you sure you want to delete this comment?
+            </ConfirmModal>
           )}
         </div>
       </li>

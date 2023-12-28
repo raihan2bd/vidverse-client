@@ -24,8 +24,6 @@ const CommentsController = ({
     fetchMoreComments(true, setLoading, page);
   };
 
-  console.log(hasNext)
-
   return (
     <div className="flex justify-center gap-4 text-violet-950">
       {hasNext && (
