@@ -26,7 +26,6 @@ const Video = async ({ params: { id } }: Props) => {
   const token = session?.token || ""
 
   const video = await getSingleVideo(videoId, token);
-  console.log(video)
 
   return (
     <div className="flex flex-col md:flex-row gap-6 p-4 md:p-6 justify-between">
