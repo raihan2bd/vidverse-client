@@ -30,15 +30,21 @@ const Comments = ({ id, views }: { id: number; views: number }) => {
   const { setError, setSuccess } = useGlobalState();
   const { data: session } = useSession();
 
-  const fetchComments = async (fetchMore=false, setLoading: Dispatch<SetStateAction<boolean>>, pageNo=1) => {
+  const fetchComments = async (
+    fetchMore = false,
+    setLoading: Dispatch<SetStateAction<boolean>>,
+    pageNo = 1
+  ) => {
     try {
       setLoading(true);
       let nextPage = pageNo;
       if (fetchMore) {
         nextPage += 1;
       }
-      
-      const response = await axios.get(`${API_URL}/api/v1/comments/${id}?page=${nextPage}&limit=${limit}`);
+
+      const response = await axios.get(
+        `${API_URL}/api/v1/comments/${id}?page=${nextPage}&limit=${limit}`
+      );
       const { data } = response;
       if (!fetchMore) {
         setComments(data.comments);
@@ -49,7 +55,6 @@ const Comments = ({ id, views }: { id: number; views: number }) => {
 
       setHasNext(data.has_next_page);
       setPage(nextPage);
-
     } catch (err: any) {
       const errMsg =
         err.response && err.response.data.message
@@ -65,22 +70,26 @@ const Comments = ({ id, views }: { id: number; views: number }) => {
 
   const handleShowLess = () => {
     if (comments.length <= limit || page === 1) return;
-    
+
     if (comments.length >= 2 * limit) {
       if (comments.length % limit === 0) {
-      setComments((prev: CommentType[]) => prev.slice(0, prev.length - limit));
+        setComments((prev: CommentType[]) =>
+          prev.slice(0, prev.length - limit)
+        );
       } else {
-        setComments((prev: CommentType[]) => prev.slice(0, prev.length - (prev.length % limit)));
+        setComments((prev: CommentType[]) =>
+          prev.slice(0, prev.length - (prev.length % limit))
+        );
       }
     } else {
       setComments((prev: CommentType[]) => prev.slice(0, limit));
     }
 
-    if (totalComments > (page - 1 ) * limit  ) {
+    if (totalComments > (page - 1) * limit) {
       setHasNext(true);
     }
     setPage((prev: number) => prev - 1);
-  }
+  };
 
   const handleAddComment = async (value: string) => {
     if (!value || value.length < 1) return;
@@ -111,12 +120,28 @@ const Comments = ({ id, views }: { id: number; views: number }) => {
           : err.message
           ? err.message
           : "Something went wrong";
-      setError(errMsg);
+
+      const status =
+        err.response && err.response.status ? err.response.status : 500;
+      switch (status) {
+        case 401:
+          setError("You are not authorized to edit this comment!!");
+          router.push(`/login?callback=${pathName}`);
+          break;
+        case 403:
+          setError("You are not authorized to edit this comment!!");
+          break;
+        case 404:
+          setError("Comment not found!!");
+          break;
+        default:
+          setError(errMsg);
+          break;
+      }
     } finally {
       setIsFormLoading(false);
     }
   };
-
 
   const handleDeleteComment = async (commentId: number) => {
     if (!session || !session.token || !session.user) {
@@ -124,10 +149,12 @@ const Comments = ({ id, views }: { id: number; views: number }) => {
       return;
     }
 
-    const commentIndex = comments.findIndex((comment: CommentType) => comment.id === commentId);
+    const commentIndex = comments.findIndex(
+      (comment: CommentType) => comment.id === commentId
+    );
     if (commentIndex === -1) return;
 
-    if (comments[commentIndex].user_id !== session.user.id ) {
+    if (comments[commentIndex].user_id !== session.user.id) {
       if (session.user.user_role !== "admin") {
         setError("You are not authorized to delete this comment!!");
         return;
@@ -136,13 +163,16 @@ const Comments = ({ id, views }: { id: number; views: number }) => {
 
     try {
       const token = session.token;
-      await axios.delete(`${API_URL}/api/v1/comments/delete-comment/${commentId}`, {
-        headers: {
-          Authorization: token,
-          "Content-Type": "application/json",
-        },
-      });
-      fetchComments(false, setLoading)
+      await axios.delete(
+        `${API_URL}/api/v1/comments/${commentId}`,
+        {
+          headers: {
+            Authorization: token,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      fetchComments(false, setLoading);
       setSuccess("Comment deleted successfully");
     } catch (err: any) {
       const errMsg =
@@ -157,7 +187,81 @@ const Comments = ({ id, views }: { id: number; views: number }) => {
     }
   };
 
-  const handleEditComment = () => {};
+
+  const handleEditComment = async (comment_id: number, text: string, setIsEditing: Dispatch<SetStateAction<boolean>>) => {
+    const editedText = text.trim();
+    if (!session || !session.token || !session.user) {
+      router.push(`/signin?callback=${pathName}`);
+      return;
+    }
+
+    const commentIndex = comments.findIndex(
+      (comment: CommentType) => comment.id === comment_id
+    );
+    if (commentIndex === -1) return;
+
+    if (comments[commentIndex].user_id !== session.user.id) {
+      if (session.user.user_role !== "admin") {
+        setError("You are not authorized to edit this comment!!");
+        return;
+      }
+    }
+
+    if (text.length < 1) {
+      setError("Comment text must be at least 2 character long");
+      return;
+    }
+    if (text.length > 500) {
+      setError("Comment text must be less than 500 character long");
+      return;
+    }
+    const token = session.token;
+
+    try {
+      setIsFormLoading(true);
+      await axios.post(
+        `${API_URL}/api/v1/comments`,
+        { text: editedText, id: comment_id, video_id: id },
+        {
+          headers: {
+            Authorization: token,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      
+      fetchComments(false, setLoading);
+      setSuccess("Comment edited successfully");
+    } catch (error: any) {
+      const errMsg =
+        error.response && error.response.data && error.response.data.error
+          ? error.response.data.error
+          : error.message
+          ? error.message
+          : "Something went wrong";
+
+      const status =
+        error.response && error.response.status ? error.response.status : 500;
+      switch (status) {
+        case 401:
+          setError("You are not authorized to edit this comment!!");
+          router.push(`/login?callback=${pathName}`);
+          break;
+        case 403:
+          setError("You are not authorized to edit this comment!!");
+          break;
+        case 404:
+          setError("Comment not found!!");
+          break;
+        default:
+          setError(errMsg);
+          break;
+      }
+    } finally {
+      setIsFormLoading(false);
+      setIsEditing(false);
+    }
+  };
 
   useEffect(() => {
     fetchComments(false, setLoading);
@@ -175,7 +279,14 @@ const Comments = ({ id, views }: { id: number; views: number }) => {
 
   if (comments.length > 0) {
     commentsContent = comments.map((comment: CommentType) => (
-      <CommentItem formLoading={isFormLoading} key={comment.id} comment={comment}  onDeleteComment={handleDeleteComment} onEditComment={handleEditComment} user={session?.user? session.user : null}/>
+      <CommentItem
+        formLoading={isFormLoading}
+        key={comment.id}
+        comment={comment}
+        onDeleteComment={handleDeleteComment}
+        onEditComment={handleEditComment}
+        user={session?.user ? session.user : null}
+      />
     ));
   } else {
     commentsContent = (
@@ -192,7 +303,13 @@ const Comments = ({ id, views }: { id: number; views: number }) => {
       <CommentForm addComment={handleAddComment} isLoading={loading} />
 
       <ul className="flex flex-col gap-4 list-none">{commentsContent}</ul>
-      <CommentsController page={page} fetchMoreComments={fetchComments} hasNext={has_next} showLess={comments.length > limit} onHandleShowLess={handleShowLess}  />
+      <CommentsController
+        page={page}
+        fetchMoreComments={fetchComments}
+        hasNext={has_next}
+        showLess={comments.length > limit}
+        onHandleShowLess={handleShowLess}
+      />
     </div>
   );
 };
