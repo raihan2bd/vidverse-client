@@ -5,12 +5,14 @@ import axios from "axios";
 import useDynamicInput from "@/hooks/useDynamicInput";
 import useFileInput from "@/hooks/useFileInput";
 import { validateInput, validateImage } from "@/utils/validator";
-import { useRouter } from "next/navigation";
 import Spinner from "../UI/Spinner";
 import ErrorModal from "../UI/ErrorModal";
 import Input from "../UI/input";
 import Button from "../UI/Button";
 import defaultThumbnail from "../../../public/images/default-thumb.jpg";
+import { useSession } from "next-auth/react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useGlobalState } from "@/context/store";
 
 const CreateORUpdateChannelForm = ({
   edit = false,
@@ -19,8 +21,20 @@ const CreateORUpdateChannelForm = ({
   chanDescription = "",
   chanLogo = "",
 }) => {
-  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const { data: session } = useSession();
+  const pathName = usePathname();
+  const params = useSearchParams();
+  const {
+    setError: setErrorToast,
+    setLoading,
+    setSuccess,
+    uiState: { loading },
+  } = useGlobalState();
+
+  const pathWithParams = useMemo(() => {
+    return `${pathName}?${params.toString()}`;
+  }, [params, pathName]);
 
   const {
     value: title,
@@ -98,6 +112,23 @@ const CreateORUpdateChannelForm = ({
 
   const formSubmitHandler = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    e.stopPropagation();
+
+    if (!session || !session.user || !session.token) {
+      router.push(`/login?callback=${pathWithParams}`);
+      setErrorToast("Please login to continue");
+      return;
+    }
+
+    if (session.user.user_role !== "author") {
+      if (session.user.user_role !== "admin") {
+        router.push("/access-denied");
+        setErrorToast("You are not allowed to create channel");
+        return;
+      }
+    }
+
+    const token = session.token;
 
     const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -107,47 +138,81 @@ const CreateORUpdateChannelForm = ({
     formData.append("title", title as string);
     formData.append("description", description as string);
     formData.append("logo", logo as File);
-    const url = edit ? `${API_URL}/api/v1/channels/${chanId}` : `${API_URL}/api/v1/channels`;
+    const url = edit
+      ? `${API_URL}/api/v1/channels/${chanId}`
+      : `${API_URL}/api/v1/channels`;
+
+    const headers = {
+      "Content-Type": "multipart/form-data",
+      Authorization: token,
+    };
+    if (edit) {
+      formData.append("logo_url", chanLogo as string);
+      if (
+        description === chanDescription &&
+        title === chanTitle &&
+        logo === null
+      ) {
+        setSuccess("Your already have this channel");
+        console.log("Nothing to update");
+        return;
+      }
+    }
 
     try {
       if (edit) {
+        setLoading(true);
         const res = await axios.patch(url, formData, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
+          headers,
         });
         const { data } = res.data;
         router.push(`/channels/${data.id}`);
       } else {
         const res = await axios.post(url, formData, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
+          headers,
         });
 
         const channelID = res.data.channel_id;
         if (channelID) {
           router.push(`/channels/${channelID}`);
-        }
-        else {
+        } else {
+          setErrorToast("Something went wrong! please try again later.");
           setError("Something went wrong! please try again later.");
         }
       }
     } catch (err: any) {
       const status = err.response.status || 500;
       const errMsg =
-        err.response.data.error ||
-        "Something went wrong! please try again later.";
+        err && err.response && err.response.data
+          ? err.response.data.error
+          : err.message
+          ? err.message
+          : "Something went wrong! please try again later.";
 
-      if (status === 403) {
-        router.push("/access-denied");
-      } else if (status === 401) {
-        router.push("/login");
-      } else {
-        setError(errMsg);
+      switch (status) {
+        case 401:
+          setErrorToast(errMsg);
+          router.push(`/login?callback=${pathWithParams}`);
+          break;
+        case 403:
+          setErrorToast(errMsg);
+          router.push("/access-denied");
+          break;
+        case 422:
+          setErrorToast(errMsg);
+          setError(errMsg);
+          break;
+        case 500:
+          setErrorToast(errMsg);
+          setError(errMsg);
+          break;
+        default:
+          setErrorToast(errMsg);
+          setError(errMsg);
+          break;
       }
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   };
 
@@ -237,7 +302,7 @@ const CreateORUpdateChannelForm = ({
       </div>
 
       <Button disabled={!isFormValid} type="submit" btnClass="w-full py-3 mt-4">
-        {isLoading ? "submitting..." : edit ? "Edit Video" : "Upload Video"}
+        {loading ? "Please Wait..." : edit ? "Edit Video" : "Upload Video"}
       </Button>
     </form>
   );

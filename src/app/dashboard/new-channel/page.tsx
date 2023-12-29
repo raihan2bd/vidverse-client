@@ -5,10 +5,11 @@ type PropsType = {
   searchParams: { [key: string]: string | string[] | undefined },
 };
 
-const page = async ({ searchParams }: PropsType) => {
+const Page = async ({ searchParams }: PropsType) => {
   const channelId = parseInt(searchParams["edit"] as string)
   if (!isNaN(channelId)) {
     const channel = await getSingleChannel(channelId);
+    console.log(channel)
 
     return (
       <div className="w-full flex justify-center p-4 bg-black/30">
@@ -21,8 +22,6 @@ const page = async ({ searchParams }: PropsType) => {
         />
       </div>
     );
-
-    return <p>{channelId}</p>
   } else {
     return (
       <div className="w-full flex justify-center p-4 bg-black/30">
@@ -32,4 +31,4 @@ const page = async ({ searchParams }: PropsType) => {
   }
 };
 
-export default page;
+export default Page;
