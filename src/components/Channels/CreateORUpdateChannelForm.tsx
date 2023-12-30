@@ -73,6 +73,7 @@ const CreateORUpdateChannelForm = ({
   );
 
   const validateLogoInput = (value: File | null) => {
+    if (edit && value === null) return null;
     const logo = validateImage(value);
     return logo.isValid ? null : logo.msg || "Invalid Image!";
   };
@@ -138,15 +139,14 @@ const CreateORUpdateChannelForm = ({
     formData.append("title", title as string);
     formData.append("description", description as string);
     formData.append("logo", logo as File);
-    const url = edit
-      ? `${API_URL}/api/v1/channels/${chanId}`
-      : `${API_URL}/api/v1/channels`;
+    let url = `${API_URL}/api/v1/channels`
 
     const headers = {
       "Content-Type": "multipart/form-data",
       Authorization: token,
     };
     if (edit) {
+      url = `${API_URL}/api/v1/channels/${chanId}`;
       formData.append("logo_url", chanLogo as string);
       if (
         description === chanDescription &&
@@ -154,19 +154,21 @@ const CreateORUpdateChannelForm = ({
         logo === null
       ) {
         setSuccess("Your already have this channel");
-        console.log("Nothing to update");
+        router.push(`/channels/${chanId}`);
         return;
       }
     }
 
     try {
+      console.log("form data", formData)
       if (edit) {
         setLoading(true);
         const res = await axios.patch(url, formData, {
           headers,
         });
-        const { data } = res.data;
-        router.push(`/channels/${data.id}`);
+        const msg = res.data && res.data.message ? res.data.message : "Your Channel is Updated Successfully!";
+        setSuccess(msg);
+        router.push(`/channels/${chanId}`);
       } else {
         const res = await axios.post(url, formData, {
           headers,
@@ -181,7 +183,8 @@ const CreateORUpdateChannelForm = ({
         }
       }
     } catch (err: any) {
-      const status = err.response.status || 500;
+      console.log(err)
+      const status = err.response && err.response.status? err.response.status : 500;
       const errMsg =
         err && err.response && err.response.data
           ? err.response.data.error

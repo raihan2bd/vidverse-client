@@ -1,6 +1,7 @@
 import Button from "@/components/UI/Button";
 import PageNotFound from "@/components/UI/PageNotFound";
 import getSingleChannel from "@/lib/getSingleChannel";
+import Image from "next/image";
 
 type PropsType = {
   params: {
@@ -18,41 +19,41 @@ const Channel = async ({ params }: PropsType) => {
       <div className="bg-slate-100 w-full h-[200px] rounded-xl">
         <img
           className="w-full h-full object-cover rounded-xl"
-          src={channel.banner}
+          src={channel.cover}
           alt={channel.title}
           width={"100%"}
           height={"200px"}
         />
       </div>
-      <div className="flex flex-col md:flex-row gap-2">
-        <img
-          className="rounded-full border border-violet-800 p-[3px]"
+      <div className="flex flex-row items-center gap-3">
+        <div className="flex-shrink-0 w-[72px] h-[72px] bg-black/10 rounded-full overflow-hidden relative"> 
+        <Image
+          className="rounded-full p-[2px] border border-violet-950"
           src={channel.logo}
-          alt=""
-          width={42}
-          height={42}
+          alt={channel.title}
+          fill={true}
+          sizes="72px"
         />
-        <div className="">
-          <h1 className="text-2xl font-bold text-violet-800">
+        </div>
+        <div className="w-fit">
+          <h1 className="text-xl mb-1 font-bold text-violet-800">
             {channel.title}
           </h1>
           <span className="block text-xs font-normal text-gray-500">
-            1M Subscribers
+            {channel.total_subscriber && channel.total_subscriber}
           </span>
           <Button
             type="button"
-            btnClass="bg-red-600 text-sm p-2 rounded-2xl text-white border-0"
+            btnClass="bg-red-600 text-sm p-1 text-white border-0" style={{borderRadius: "20px"}}
           >
             Subscribe
           </Button>
-          <p className="text-sm font-normal text-gray-500">
-            {channel.description}
-          </p>
         </div>
-      </div>
+        </div>
+      {/* channel description */}
 
-    {/* Videos by channels */}
-    {/* Todo: display channel's video */}
+      {/* Videos by channels */}
+      {/* Todo: display channel's video */}
     </article>
   );
 };
