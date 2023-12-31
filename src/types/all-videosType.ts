@@ -26,3 +26,21 @@ type VideoFromDetails = {
   vid_src: string;
   description: string
 };
+
+type ChannelsForForm = {
+  id: number;
+  title: string;
+  logo: string;
+}
+
+type CustomSession = {
+  user: {
+    id: number;
+    user_name: string;
+    user_role: string;
+    avatar: string;
+  };
+  token: string;
+  expires_at: number;
+  error?: "RefreshAccessTokenError"
+}

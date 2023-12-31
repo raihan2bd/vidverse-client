@@ -1,49 +1,39 @@
 "use client";
 
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useState, useMemo, useEffect, useCallback } from "react";
 import { validateImage, validateInput, validateVideo } from "@/utils/validator";
 import Input from "@/components/UI/input";
 import Button from "@/components/UI/Button";
 import useFileInput from "@/hooks/useFileInput";
 import defaultVideo from "../../../public/images/video-thumbnail.png";
 import defaultVideoThumb from "../../../public/images/default-thumb.jpg";
-import useFetchData from "@/hooks/useFetchData";
 import useDynamicInput from "@/hooks/useDynamicInput";
-import axios, { Axios, AxiosError } from "axios";
+import axios from "axios";
 import { useRouter } from "next/navigation";
-import ErrorModal from "../UI/ErrorModal";
-import Spinner from "../UI/Spinner";
-import { useSession } from "next-auth/react";
-import { PassThrough } from "stream";
 import { useGlobalState } from "@/context/store";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
-interface ChannelData {
-  channels: Array<{
-    id: string;
-    title: string;
-  }>;
-}
-
 type PropsType = {
-  videoDetails?: {
-    id: number;
-    title: string;
-    thumb: string;
-    channel_id: number;
-    vid_src: string;
-    description: string;
-  };
+  videoDetails?: VideoFromDetails;
   edit?: boolean;
+  channels: ChannelsForForm[] | null;
+  session: CustomSession | null;
 };
 
-const UploadOrEditVideoForm = ({ videoDetails, edit = false }: PropsType) => {
+const UploadOrEditVideoForm = ({
+  videoDetails,
+  edit = false,
+  channels,
+  session,
+}: PropsType) => {
   // state to submit form
-  const { data: session } = useSession();
-  const { setSuccess } = useGlobalState();
-  const [pending, setPending] = useState<boolean>(false);
-  const [hasError, setHasError] = useState<string | null>(null);
+  const {
+    setSuccess,
+    setError,
+    setLoading,
+    uiState: { error, loading },
+  } = useGlobalState();
   const router = useRouter();
 
   const {
@@ -105,7 +95,7 @@ const UploadOrEditVideoForm = ({ videoDetails, edit = false }: PropsType) => {
       validateInput(value, {
         inputType: "string",
         minLength: 6,
-        maxLength: 255,
+        maxLength: 500,
       }),
     videoDetails?.description || ""
   );
@@ -113,42 +103,35 @@ const UploadOrEditVideoForm = ({ videoDetails, edit = false }: PropsType) => {
   const [selectedChannel, setSelectedChannel] = useState<string>(
     videoDetails?.channel_id.toString() || ""
   );
-  const changeChannelHandler = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setSelectedChannel(e.target.value);
-  };
+  const changeChannelHandler = useCallback(
+    (e: React.ChangeEvent<HTMLSelectElement>) => {
+      setSelectedChannel(e.target.value);
+    },
+    []
+  );
 
   let formIsValid = false;
   if (edit) {
-    formIsValid =
-      !titleError &&
-      !descriptionError &&
-      selectedChannel !== "" &&
-      (titleIsTouched ||
-        isVideoTouched ||
-        descriptionIsTouched ||
-        isThumbnailTouched);
+    formIsValid = !titleError && !descriptionError;
   } else {
     formIsValid =
       !titleError &&
       !videoError &&
       !descriptionError &&
       !thumbnailError &&
-      selectedChannel !== "" &&
-      titleIsTouched &&
-      isVideoTouched &&
-      descriptionIsTouched &&
-      isThumbnailTouched;
+      selectedChannel !== "";
   }
 
   const submitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    e.stopPropagation();
     const token = session?.token || null;
 
-    if (!token && session?.user.user_role !== "admin" && !token) {
-      throw new Error("You are not authorized to access this resource");
-    }
     if (!formIsValid) {
+      setError("Please fill all the required fields");
+      titleBlurHandler();
+      videoBlurHandler();
+      descriptionBlurHandler()
+      thumbnailBlurHandler();
       return;
     }
 
@@ -173,7 +156,7 @@ const UploadOrEditVideoForm = ({ videoDetails, edit = false }: PropsType) => {
     }
 
     try {
-      setPending(true);
+      setLoading(true);
       const response = await axios.post(uri, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
@@ -191,7 +174,6 @@ const UploadOrEditVideoForm = ({ videoDetails, edit = false }: PropsType) => {
         setSuccess("Video updated successfully");
         router.push(`/videos`);
       }
-      
     } catch (error: any) {
       console.log(error);
       const status = error && error.response ? error.response.status : 500;
@@ -204,41 +186,31 @@ const UploadOrEditVideoForm = ({ videoDetails, edit = false }: PropsType) => {
 
       switch (status) {
         case 401:
-          setHasError("Failed to authenticate");
+          setError("Failed to authenticate");
           router.push("/login");
           break;
         case 403:
-          setHasError("You are not authorized to access this resource");
+          setError("You are not authorized to access this resource");
           router.push("/access-denied");
           break;
         case 404:
-          setHasError(msg);
+          setError(msg);
           break;
         default:
-          setHasError("Something went wrong. please try again later.");
+          setError("Something went wrong. please try again later.");
           break;
       }
     } finally {
-      setPending(false);
+      setLoading(false);
     }
   };
 
-  // load channels
-  const { loading: chanLoading, data: chanData } = useFetchData<ChannelData>(
-    `${API_URL}/api/v1/channels`
-  );
-
   // set channels
   useEffect(() => {
-    if (
-      !edit &&
-      chanData &&
-      chanData.channels &&
-      chanData.channels.length > 0
-    ) {
-      setSelectedChannel(chanData.channels[0].id.toString());
+    if (!edit && channels && channels.length > 0) {
+      setSelectedChannel(channels[0].id.toString());
     }
-  }, [chanData, edit]);
+  }, [channels, edit]);
 
   let videoPreviewContent = useMemo(() => {
     if (video && !videoError) {
@@ -280,6 +252,7 @@ const UploadOrEditVideoForm = ({ videoDetails, edit = false }: PropsType) => {
         />
       );
     } else if (videoDetails?.thumb) {
+      console.log(videoDetails?.thumb);
       return (
         <img
           className="rounded max-h-[100%] max-w-[100%] border mx-auto"
@@ -302,110 +275,106 @@ const UploadOrEditVideoForm = ({ videoDetails, edit = false }: PropsType) => {
     }
   }, [thumbnail, thumbnailError]);
 
-  if (pending) {
-    return (
-      <div className="bg-black/25 w-[100vw] overflow-hidden max-w-[100%] h-screen flex justify-center items-center">
-        <Spinner />
-      </div>
-    );
-  }
-
-  if (hasError) {
-    return (
-      <ErrorModal errMsg={hasError} tryAgainHandler={() => setHasError(null)} />
-    );
-  }
+  const channelsOptions = useMemo(() => {
+    if (!edit) {
+      return (
+        <div className="flex flex-col gap-2">
+          <label className="text-sm text-black/90" htmlFor="channel">
+            Channel:
+          </label>
+          <select
+            name="channel"
+            id="channel"
+            className="border border-black/30 rounded-sm p-2 w-full"
+            onChange={changeChannelHandler}
+            value={selectedChannel}
+          >
+            {channels && channels.length > 0 ? (
+              channels.map((channel: any) => {
+                return (
+                  <option key={channel.id} value={channel.id}>
+                    {channel.title}
+                  </option>
+                );
+              })
+            ) : (
+              <option>No channels found</option>
+            )}
+          </select>
+        </div>
+      );
+    } else {
+      return "";
+    }
+  }, [channels, selectedChannel, edit]);
 
   return (
-    <form
-      onSubmit={submitHandler}
-      className="w-[768px] max-w-[100%] p-4 md:p-6 min-h-screen bg-white rounded-2xl flex flex-col gap-2"
-    >
-      <h1 className="py-1 text-2xl font-bold text-violet-700 block w-fit border-0 border-b-[3px] mx-auto border-bg-black/30">
-        {videoDetails?.id ? "EDIT VIDEO" : "UPLOAD VIDEO"}
-      </h1>
+    <div className="w-full flex justify-center p-4 bg-black/30">
+      <form
+        onSubmit={submitHandler}
+        className="w-[768px] max-w-[100%] p-4 md:p-6 min-h-screen bg-white rounded-2xl flex flex-col gap-2"
+      >
+        <h1 className="py-1 text-2xl font-bold text-violet-700 block w-fit border-0 border-b-[3px] mx-auto border-bg-black/30">
+          {videoDetails?.id ? "EDIT VIDEO" : "UPLOAD VIDEO"}
+        </h1>
 
-      <Input
-        name="title"
-        label="Title"
-        type="text"
-        value={title as string}
-        placeholder="Enter your video title"
-        onChange={titleChangeHandler}
-        onBlur={titleBlurHandler}
-        inputError={titleIsTouched ? titleError : null}
-      />
+        <Input
+          name="title"
+          label="Title"
+          type="text"
+          value={title as string}
+          placeholder="Enter your video title"
+          onChange={titleChangeHandler}
+          onBlur={titleBlurHandler}
+          inputError={titleIsTouched ? titleError : null}
+        />
 
-      {videoPreviewContent}
+        {videoPreviewContent}
 
-      <Input
-        type="file"
-        name="video"
-        label="Video"
-        onChange={videoChangeHandler}
-        onBlur={videoBlurHandler}
-        inputError={isVideoTouched ? videoError : null}
-        accept="video/mp4, video/ogg, video/webm, video/avi, video/mov"
-      />
+        <Input
+          type="file"
+          name="video"
+          label="Video"
+          onChange={videoChangeHandler}
+          onBlur={videoBlurHandler}
+          inputError={isVideoTouched ? videoError : null}
+          accept="video/mp4, video/ogg, video/webm, video/avi, video/mov"
+        />
 
-      <div className="flex flex-col gap-2">
-        <label className="text-sm text-black/90" htmlFor="description">
-          Description:
-        </label>
-        <textarea
-          className="border border-black/30 rounded-sm p-2 w-full h-32"
-          name="description"
-          id="description"
-          value={description as string}
-          onChange={descriptionChangeHandler}
-          onBlur={descriptionBlurHandler}
-          placeholder="Enter your Video description"
-        ></textarea>
-      </div>
+        <div className="flex flex-col gap-2">
+          <label className="text-sm text-black/90" htmlFor="description">
+            Description: {descriptionError && descriptionIsTouched && <span className="text-red-500 ms-2">{descriptionError}</span>}
+          </label>
+          <textarea
+            className="border border-black/30 rounded-sm p-2 w-full h-32"
+            name="description"
+            id="description"
+            value={description as string}
+            onChange={descriptionChangeHandler}
+            onBlur={descriptionBlurHandler}
+            placeholder="Enter your Video description"
+          ></textarea>
+        </div>
 
-      <div className="flex flex-col gap-2">
-        <label className="text-sm text-black/90" htmlFor="channel">
-          Channel:
-        </label>
-        <select
-          name="channel"
-          id="channel"
-          className="border border-black/30 rounded-sm p-2 w-full"
-          onChange={changeChannelHandler}
-          value={selectedChannel}
-        >
-          {chanLoading ? (
-            <option>Loading...</option>
-          ) : chanData && chanData?.channels.length > 0 ? (
-            chanData?.channels.map((channel: any) => {
-              return (
-                <option key={channel.id} value={channel.id}>
-                  {channel.title}
-                </option>
-              );
-            })
-          ) : (
-            <option>No channels found</option>
-          )}
-        </select>
-      </div>
+        {channelsOptions}
 
-      {thumbnailPreviewContent}
+        {thumbnailPreviewContent}
 
-      <Input
-        onChange={thumbnailChangeHandler}
-        onBlur={thumbnailBlurHandler}
-        inputError={isThumbnailTouched ? thumbnailError : null}
-        type="file"
-        name="thumbnail"
-        label="Thumbnail"
-        accept="image/png, image/jpeg, image/jpg"
-      />
+        <Input
+          onChange={thumbnailChangeHandler}
+          onBlur={thumbnailBlurHandler}
+          inputError={isThumbnailTouched ? thumbnailError : null}
+          type="file"
+          name="thumbnail"
+          label="Thumbnail"
+          accept="image/png, image/jpeg, image/jpg"
+        />
 
-      <Button disabled={!formIsValid} type="submit" btnClass="w-full py-3 mt-4">
-        {pending ? "submitting..." : edit ? "Edit Video" : "Upload Video"}
-      </Button>
-    </form>
+        <Button disabled={loading} type="submit" btnClass="w-full py-3 mt-4">
+          {loading ? "submitting..." : edit ? "Edit Video" : "Upload Video"}
+        </Button>
+      </form>
+    </div>
   );
 };
 
