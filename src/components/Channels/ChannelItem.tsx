@@ -65,9 +65,12 @@ const channelItem = ({
           "Content-Type": "application/json",
         },
       });
+      setLoading(false)
       setSuccess("Channel deleted successfully!");
       router.refresh();
     } catch (error: any) {
+      console.log(error)
+      setLoading(false)
       const errMsg =
         error.response && error.response.data && error.response.data.error
           ? error.response.data.error
@@ -90,6 +93,8 @@ const channelItem = ({
           setError(errMsg);
           break;
       }
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -100,12 +105,12 @@ const channelItem = ({
         alt={title}
         sizes="400px"
         fill={true}
-        className="w-full h-full z-10"
+        className="w-full h-full z-[1]"
         priority={true}
       />
-      <div className="absolute top-0 left-0 w-full h-full bg-violet-950 bg-opacity-80 z-20 backdrop-blur-[3px]"></div>
+      <div className="absolute top-0 left-0 w-full h-full bg-violet-950 bg-opacity-80 z-[2] backdrop-blur-[3px]"></div>
 
-      <div className="absolute top-0 left-0 right-0 bottom-0 w-full h-full z-30 flex flex-col justify-between items-center p-[2%] gap-4">
+      <div className="absolute top-0 left-0 right-0 bottom-0 w-full h-full z-[3] flex flex-col justify-between items-center p-[2%] gap-4">
         <div className="flex flex-col justify-center items-center gap-2">
           <Link className="static block" href={`/channels/${id}`}>
             <div className="relative w-[48px] h-[48px] mx-auto">

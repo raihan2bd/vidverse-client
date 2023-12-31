@@ -123,7 +123,7 @@ const CreateORUpdateChannelForm = ({
 
     if (session.user.user_role !== "author") {
       if (session.user.user_role !== "admin") {
-        router.push("/access-denied");
+        router.push(`/contact-us?req_for=author&callback=${pathWithParams}`);
         setErrorToast("You are not allowed to create channel");
         return;
       }
