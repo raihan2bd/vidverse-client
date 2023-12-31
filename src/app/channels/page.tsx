@@ -43,8 +43,8 @@ const Channels = async () => {
         id={channel.id}
         cover={channel.cover}
         logo={channel.logo}
-        totalVideos={channel.total_videos}
-        totalSubscriber={0}
+        totalVideos={channel.total_video}
+        totalSubscriber={channel.total_subscriber}
         user_id={session.user.id}
         token={session.token}
         user_role={session.user.user_role}

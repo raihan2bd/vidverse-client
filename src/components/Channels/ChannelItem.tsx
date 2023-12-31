@@ -66,7 +66,7 @@ const channelItem = ({
         },
       });
       setSuccess("Channel deleted successfully!");
-     router.refresh();
+      router.refresh();
     } catch (error: any) {
       const errMsg =
         error.response && error.response.data && error.response.data.error
@@ -107,66 +107,69 @@ const channelItem = ({
 
       <div className="absolute top-0 left-0 right-0 bottom-0 w-full h-full z-30 flex flex-col justify-between items-center p-[2%] gap-4">
         <div className="flex flex-col justify-center items-center gap-2">
+          <Link className="static block" href={`/channels/${id}`}>
+            <div className="relative w-[48px] h-[48px] mx-auto">
+              <Image
+                src={logo}
+                alt={title}
+                fill={true}
+                className="rounded-full border border-white p-[2px]"
+                sizes="48px"
+                priority={true}
+              />
+            </div>
+            <h3 className="text-lg font-bold text-center text-white mt-1 overflow-hidden">
+              {title}
+            </h3>
+          </Link>
 
-        <Link className="static block" href={`/channels/${id}`}>
-          <div className="relative w-[48px] h-[48px] mx-auto">
-            <Image
-              src={logo}
-              alt={title}
-              fill={true}
-              className="rounded-full border border-white p-[2px]"
-              sizes="48px"
-              priority={true}
-            />
+          <div className="flex justify-center items-center gap-2 text-base text-white font-bold px-4 py-2">
+            <button
+              className="bg-transparent hover:bg-red-600 active:bg-red-500 px-2 py-1 border"
+              onClick={() => setIsDeleting(true)}
+              disabled={isLoading}
+            >
+              <FaRegTrashAlt />
+            </button>
+            <Link
+              className="bg-transparent hover:bg-red-600 active:bg-red-500 px-2 py-1 border"
+              href={`/dashboard/new-channel?edit=${id}`}
+            >
+              <BiEdit />
+            </Link>
           </div>
-          <h3 className="text-lg font-bold text-center text-white mt-1 overflow-hidden">
-            {title}
-          </h3>
-        </Link>
-
-        <div className="flex justify-center items-center gap-2 text-base text-white font-bold px-4 py-2">
-        <button
-          className="bg-transparent hover:bg-red-600 active:bg-red-500 px-2 py-1 border"
-          onClick={() => setIsDeleting(true)}
-          disabled={isLoading}
-
-        >
-          <FaRegTrashAlt />
-        </button>
-        <Link
-          className="bg-transparent hover:bg-red-600 active:bg-red-500 px-2 py-1 border"
-          href={`/dashboard/new-channel?edit=${id}`}
-        >
-          <BiEdit />
-        </Link>
-      </div>
         </div>
-        
+
         <div className="flex flex-row gap-2 justify-between w-[100%] opacity-60">
           <h4 className="text-white bg-black/50 p-2 text-sm">
-            <span className="m-[-5px] bg-violet-500/50 text-xs font-normal p-2 mr-1">
-              {totalSubscriber ? totalSubscriber : 0}
-            </span>{" "}
-            Subscribers
+            <Link href={`/channels/${id}`}>
+              <span className="m-[-5px] bg-violet-500/50 text-xs font-normal p-2 mr-1">
+                {totalSubscriber ? totalSubscriber : 0}
+              </span>{" "}
+              Subscribers
+            </Link>
           </h4>
           <h4 className="text-white bg-black/50 p-2 text-sm">
-            <span className="m-[-5px] bg-violet-500/50 text-xs font-normal p-2 mr-1">
-              {totalVideos ? totalVideos : 0}
-            </span>{" "}
-            Videos
+            <Link href={`/channels/${id}?videos=true`}>
+              <span className="m-[-5px] bg-violet-500/50 text-xs font-normal p-2 mr-1">
+                {totalVideos ? totalVideos : 0}
+              </span>{" "}
+              Videos
+            </Link>
           </h4>
         </div>
-
       </div>
       {isDeleting && (
-            <ConfirmModal
-              onCancel={() => setIsDeleting(false)}
-              onConfirm={deleteItem}
-              title="Delete Channel"
-            >
-              <span className="text-red-500">Are you sure you want to delete this channel?</span>
-            </ConfirmModal>
-          )}
+        <ConfirmModal
+          onCancel={() => setIsDeleting(false)}
+          onConfirm={deleteItem}
+          title="Delete Channel"
+        >
+          <span className="text-red-500">
+            Are you sure you want to delete this channel?
+          </span>
+        </ConfirmModal>
+      )}
     </li>
   );
 };
