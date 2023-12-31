@@ -18,7 +18,6 @@ const Channels = async () => {
   }
 
   const { channels } = await getAllChannels(session.token);
-  console.log(channels);
 
   let channelsContent;
   if (channels.length <= 0) {

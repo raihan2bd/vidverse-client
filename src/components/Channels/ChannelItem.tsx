@@ -59,7 +59,7 @@ const channelItem = ({
       }
     }
     try {
-      await axios.delete(`${API_URL}/channels/${id}`, {
+      await axios.delete(`${API_URL}/api/v1/channels/${id}`, {
         headers: {
           Authorization: token,
           "Content-Type": "application/json",
