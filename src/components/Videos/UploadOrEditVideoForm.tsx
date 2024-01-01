@@ -95,7 +95,7 @@ const UploadOrEditVideoForm = ({
     (value) =>
       validateInput(value, {
         inputType: "string",
-        minLength: 6,
+        minLength: 25,
         maxLength: 500,
       }),
     videoDetails?.description || ""
@@ -184,6 +184,7 @@ const UploadOrEditVideoForm = ({
       console.log(response.data)
 
     } catch (error: any) {
+      console.log(error);
       const {errMsg: msg, status} = errMsgWithStatus(error);
       switch (status) {
         case 401:
@@ -192,17 +193,12 @@ const UploadOrEditVideoForm = ({
           break;
         case 403:
           setError("You are not authorized to access this resource");
-          router.push("/access-denied");
-          break;
-        case 404:
-          setError(msg);
+          router.push(`/contact-us?req_for=author&callback=/dashboard/upload-video${videoDetails?.id ? `?edit=${videoDetails?.id}` : ""}`);
           break;
         default:
-          setError("Something went wrong. please try again later.");
+          setError(msg);
           break;
       }
-    } finally {
-      setLoading(false);
     }
   };
 

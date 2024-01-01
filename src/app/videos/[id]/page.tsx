@@ -11,6 +11,7 @@ import {authOptions} from '../../api/auth/[...nextauth]/route'
 import Subscribe from "@/components/Videos/Subscibe";
 import Like from '@/components/Videos/Like'
 import ResizeText from "@/components/Videos/ResizeText";
+import VideoAction from "@/components/Videos/VideoActions";
 
 type Props = {
   params: {
@@ -26,6 +27,10 @@ const Video = async ({ params: { id } }: Props) => {
   const token = session?.token || ""
 
   const video = await getSingleVideo(videoId, token);
+  console.log(session?.user?.user_role === "admin" || (session?.user?.id === Number(video.channel.user_id) && session.user.user_role === 'author'))
+
+  const adminContent = session && session.user && (session.user.user_role === "admin" || (session.user.id === Number(video.channel.user_id) && session.user.user_role === 'author')) ? (
+    <VideoAction id={videoId} user_id={video.channel.user_id} />) : null
 
   return (
     <div className="flex flex-col md:flex-row gap-6 p-4 md:p-6 justify-between">
@@ -38,6 +43,8 @@ const Video = async ({ params: { id } }: Props) => {
         <h2 className="text-md font-bold text-violet-800 px-4">
           {video.title}
         </h2>
+
+        {adminContent}
 
         <div className="flex gap-2 items-center justify-between p-4 bg-slate-100">
           <div className="flex gap-3 items-center text-sm">

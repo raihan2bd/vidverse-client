@@ -18,7 +18,7 @@ const ToastMessage = ({ error, message, resetUiState }: PropType) => {
 
   return (
     <div
-      className={`w-[70%] md:w-[350px] max-w-[100%] fixed right-2 top-[5.5rem] flex flex-col justify-center items-center bg-white shadow-lg rounded-lg`}
+      className={`w-[70%] md:w-[350px] max-w-[100%] fixed right-2 top-[5.5rem] flex flex-col justify-center items-center bg-white shadow-lg rounded-lg z-[100]`}
     >
       <button
         onClick={resetUiState}

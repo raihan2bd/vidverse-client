@@ -18,7 +18,7 @@ const Videos = async ({
 
   return (
     <div className="p-4">
-      <ul className="list-none flex gap-4 flex-wrap w-fit justify-between">
+      <ul className="list-none flex gap-4 flex-wrap w-fit justify-start mx-auto">
         {videosContent}
         <LoadMoreVideos has_next_page={has_next_page} searchQuery={searchQuery} />
       </ul>
