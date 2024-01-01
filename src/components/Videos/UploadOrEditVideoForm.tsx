@@ -11,6 +11,7 @@ import useDynamicInput from "@/hooks/useDynamicInput";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useGlobalState } from "@/context/store";
+import { errMsgWithStatus, successMsg } from "@/utils/responseMsg";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -113,12 +114,12 @@ const UploadOrEditVideoForm = ({
   let formIsValid = false;
   if (edit) {
     formIsValid = !titleError && !descriptionError;
+    
   } else {
     formIsValid =
       !titleError &&
       !videoError &&
       !descriptionError &&
-      !thumbnailError &&
       selectedChannel !== "";
   }
 
@@ -126,33 +127,46 @@ const UploadOrEditVideoForm = ({
     e.preventDefault();
     const token = session?.token || null;
 
+    // validate form
     if (!formIsValid) {
+      console.log("form is not valid");
+      if (edit) {
+        if (video && videoError) {
+          videoBlurHandler();
+        } else if (thumbnail && thumbnailError) {
+          thumbnailBlurHandler();
+        }
+
+        setError("Please fill all the required fields");
+        titleBlurHandler();
+        descriptionBlurHandler();
+        return;
+      }
       setError("Please fill all the required fields");
       titleBlurHandler();
       videoBlurHandler();
-      descriptionBlurHandler()
+      descriptionBlurHandler();
+      return;
+    }
+
+    if (thumbnail && thumbnailError) {
       thumbnailBlurHandler();
       return;
     }
 
+
+    // set form data
     const formData = new FormData();
     let uri = `${API_URL}/api/v1/videos`;
-
-    if (edit && videoDetails) {
-      // multipart form data
-      formData.append("title", title as string);
-      formData.append("description", description as string);
-      formData.append("channel_id", selectedChannel);
-      formData.append("video", video as File);
-      formData.append("thumbnail", thumbnail as File);
-
-      uri = `${API_URL}/api/v1/videos/${videoDetails.id}`;
-    } else {
-      formData.append("title", title as string);
-      formData.append("description", description as string);
-      formData.append("channel_id", selectedChannel);
-      formData.append("video", video as File);
-      formData.append("thumbnail", thumbnail as File);
+    formData.append("title", title as string);
+    formData.append("description", description as string);
+    formData.append("channel_id", selectedChannel);
+    formData.append("video", video as File);
+    formData.append("thumb", thumbnail as File);
+    if (edit) {
+      formData.append("video_url", videoDetails?.vid_src as string);
+      formData.append("thumbnail_url", videoDetails?.thumb as string);
+      uri = `${API_URL}/api/v1/videos/${videoDetails?.id}`;
     }
 
     try {
@@ -163,27 +177,14 @@ const UploadOrEditVideoForm = ({
           Authorization: token,
         },
       });
+      
+      setSuccess(successMsg(response, "Video uploaded successfully!"));
+      const video_id = response.data.video_id || videoDetails?.id;
+      // router.push(`/videos/${video_id}`); // redirect to video page
+      console.log(response.data)
 
-      if (response.data.video_id) {
-        setSuccess("Video uploaded successfully");
-        router.push(`/videos/${response.data.video_id}`);
-      } else if (videoDetails?.id) {
-        setSuccess("Video updated successfully");
-        router.push(`/videos/${videoDetails.id}`);
-      } else {
-        setSuccess("Video updated successfully");
-        router.push(`/videos`);
-      }
     } catch (error: any) {
-      console.log(error);
-      const status = error && error.response ? error.response.status : 500;
-      const msg =
-        error && error.response
-          ? error.response.data.error
-          : error.message
-          ? error.message
-          : "Something went wrong";
-
+      const {errMsg: msg, status} = errMsgWithStatus(error);
       switch (status) {
         case 401:
           setError("Failed to authenticate");
