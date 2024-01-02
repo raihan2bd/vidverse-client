@@ -6,15 +6,17 @@ import { useSession, signOut } from "next-auth/react";
 import { useRouter, usePathname } from "next/navigation";
 import { useGlobalState } from "@/context/store";
 import Button from "../UI/Button";
+import { on } from "events";
 
 type Props = {
   is_subscribed: boolean;
   channel_id: number;
+  onHandleSubscribed?: (subType: number) => void
 };
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
-const Subscribe = ({ is_subscribed, channel_id }: Props) => {
+const Subscribe = ({ is_subscribed, channel_id, onHandleSubscribed }: Props) => {
   const [isSubscribed, setIsSubscribe] = useState<boolean>(is_subscribed? true: false);
   const [loading, setLoading] = useState(false);
   const { data: session } = useSession();
@@ -35,7 +37,22 @@ const Subscribe = ({ is_subscribed, channel_id }: Props) => {
           Authorization: token,
         },
       });
-      setIsSubscribe((prev) => !prev);
+      if (onHandleSubscribed) {
+        onHandleSubscribed(isSubscribed? 1 : 0);
+      }
+      setIsSubscribe((prev) => {
+        if (prev) {
+          if (onHandleSubscribed) {
+            onHandleSubscribed(0);
+          }
+        } else {
+          if (onHandleSubscribed) {
+            onHandleSubscribed(1);
+          }
+        }
+
+        return !prev;
+      });
     } catch (error: any) {
       const messge =
         error.response.data.error || error.message || "Something went wrong";
