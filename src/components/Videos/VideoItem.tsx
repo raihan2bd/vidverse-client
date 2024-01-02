@@ -10,7 +10,7 @@ interface VideoItemProps {
 
 const VideoItem = ({ video }: VideoItemProps) => {
   return (
-    <li className="w-[100%] sm:w-[48%] lg:w-[31%] 2xl:w-[23.9%] max-w-[100%] shrink-1 rounded bg-white p-2 shadow-md flex flex-col justify-between gap-2">
+    <li className="w-[100%] max-w-[100%] shrink-1 rounded bg-white p-2 shadow-md flex flex-col justify-between gap-2 overflow-hidden">
       <Link href={`/videos/${video.id}`} className="block">
         <div className="relative w-full h-[240px] sm:h-[200px]">
           <Image

@@ -27,7 +27,6 @@ const Video = async ({ params: { id } }: Props) => {
   const token = session?.token || ""
 
   const video = await getSingleVideo(videoId, token);
-  console.log(session?.user?.user_role === "admin" || (session?.user?.id === Number(video.channel.user_id) && session.user.user_role === 'author'))
 
   const adminContent = session && session.user && (session.user.user_role === "admin" || (session.user.id === Number(video.channel.user_id) && session.user.user_role === 'author')) ? (
     <VideoAction id={videoId} user_id={video.channel.user_id} />) : null
