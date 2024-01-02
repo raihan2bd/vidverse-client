@@ -8,12 +8,15 @@ import { signIn } from "next-auth/react";
 import useInput from "@/hooks/useInput";
 import { validateInput } from "@/utils/validator";
 import { useSession } from "next-auth/react";
+import { useGlobalState } from "@/context/store";
 
 const Login = () => {
   const { data: session } = useSession();
   const [showPass, setShowPass] = useState(false);
   const [loading, setLoading] = useState(false);
   const [hasError, setHasError] = useState<null | string>(null);
+
+  const { setSuccess } = useGlobalState();
 
   // get the callback url from query
   const searchParams = useSearchParams();
@@ -73,6 +76,7 @@ const Login = () => {
         }
         throw new Error("Something went wrong. Please try again later");
       }
+      setSuccess("Login successful!");
       router.refresh();
     } catch (error) {
       setHasError(

@@ -10,10 +10,12 @@ interface VideoType {
 
 interface CommentType {
   id: number;
-  name: string;
-  avatar: string;
-  comment: string;
+  user_id: number;
+  user_name: string;
+  user_avatar: string;
+  text: string;
   channel_id?: number;
+  created_at: string;
 }
 
 type VideoFromDetails = {
@@ -24,3 +26,21 @@ type VideoFromDetails = {
   vid_src: string;
   description: string
 };
+
+type ChannelsForForm = {
+  id: number;
+  title: string;
+  logo: string;
+}
+
+type CustomSession = {
+  user: {
+    id: number;
+    user_name: string;
+    user_role: string;
+    avatar: string;
+  };
+  token: string;
+  expires_at: number;
+  error?: "RefreshAccessTokenError"
+}

@@ -6,6 +6,7 @@ declare module 'next-auth' {
       id: number;
       user_name: string;
       user_role: string;
+      avatar: string;
     };
     token: string;
     expires_at: number;
@@ -21,9 +22,9 @@ declare module "next-auth/jwt" {
       id: number;
       user_name: string;
       user_role: string;
+      avatar: string;
     };
     token: string;
     expires_at: number;
-    error?: "RefreshAccessTokenError"
   }
 }

@@ -7,7 +7,7 @@ interface PropTypes {
 }
 
 const Provider  = ({ children }: PropTypes) => {
-
+  
   return (
     <SessionProvider>
       {children}

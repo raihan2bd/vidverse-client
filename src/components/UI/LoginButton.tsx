@@ -4,6 +4,7 @@ import React, { useEffect } from "react";
 import { signOut } from "next-auth/react";
 import Link from "next/link";
 import Button from "./Button";
+import { IoMdExit } from "react-icons/io";
 
 const LoginButton = () => {
   const { data: session } = useSession();
@@ -16,14 +17,14 @@ const LoginButton = () => {
 
   if (session && session.user)
     return (
-      <div className="flex gap-4 ml-auto items-center">
+      <div className="flex ml-auto items-center">
         <p className="text-sky-400 ">{session.user.user_name}</p>
         <Button type="button" onClick={() => {
           signOut()
         }}
-        btnClass="bg-red-500 px-3 py-2"
+        className="bg-violet-600 text-white p-2 rounded-sm hover:bg-red-700 text-2xl"
         >
-          Logout
+          <IoMdExit />
         </Button>
       </div>
     );

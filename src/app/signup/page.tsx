@@ -5,10 +5,16 @@ import axios from "axios";
 import useInput from "@/hooks/useInput";
 import Input from "@/components/UI/input";
 import Button from "@/components/UI/Button";
-import { validateInput, ValidationResultType } from "@/utils/validator";
+import { validateInput } from "@/utils/validator";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useGlobalState } from "@/context/store";
 
 const Signup = () => {
   const [showPass, setShowPass] = useState(false);
+  const router = useRouter();
+  const query = useSearchParams()
+  const callbackUrl = query.get('callback') || "/";
+  const { setError, setLoading, setSuccess} = useGlobalState();
 
   const {
     value: name,
@@ -51,18 +57,23 @@ const Signup = () => {
 
   const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    setLoading(true);
+    if (!isFormValid) return;
     try {
-      axios.defaults.withCredentials = true;
-
-      const res = await axios.post(
-        "http://localhost:4000/api/v1/auth/signup",
-        {}
+      const API_URL = process.env.NEXT_PUBLIC_API_URL;
+      await axios.post(
+        `${API_URL}/api/v1/auth/signup`,
+        {
+          name,
+          email,
+          password,
+        }
       );
-      // const result = await res.json()
-      // console.log(result)
-      console.log(res.data);
-    } catch (error) {
-      console.log(error);
+      setSuccess("Signup successful, please login to continue")
+      router.push(`/login?callback=${callbackUrl}`)
+    } catch (error: any) {
+      const msg = error.response?.data?.error || error.message || "Something went wrong, please try again!";
+      setError(msg);
     }
   };
 

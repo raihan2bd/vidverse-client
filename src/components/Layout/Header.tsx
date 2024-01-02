@@ -8,6 +8,8 @@ import { BiSearch } from "react-icons/bi";
 import { BsArrowLeftShort } from "react-icons/bs";
 
 import SearchForm from "../SearchForm/SearchForm";
+import NotificationIcon from "./Notification/NotificationIcon";
+import { useSession } from "next-auth/react";
 
 interface PropsTypes {
   showSideBar: boolean;
@@ -15,6 +17,7 @@ interface PropsTypes {
 }
 
 const Header = ({ onSetShowSideBar, showSideBar }: PropsTypes) => {
+  const {data: session} = useSession()
   const [showSearchBar, setShowSearchBar] = useState(false);
 
   const showSearchBarHandler = () => setShowSearchBar(true);
@@ -66,7 +69,10 @@ const Header = ({ onSetShowSideBar, showSideBar }: PropsTypes) => {
         <SearchForm onHideSearchBar={hideSearchBarHandler}/>
       </div>
       <nav>
-        <ul>
+        <ul className="flex flex-row gap-2 justify-center items-center">
+         {session?.user && <li className="relative p-2 flex justify-center items-center">
+            <NotificationIcon />
+          </li>}
           <li>
             <LoginButton />
           </li>

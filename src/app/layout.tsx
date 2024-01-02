@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import UILayout from "@/components/Layout/UILayout";
 import Provider from "@/components/Provider/Provider";
+import { WebSocketProvider } from "@/context/store";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -21,7 +22,9 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <Provider>
-          <UILayout>{children}</UILayout>
+          <WebSocketProvider>
+            <UILayout>{children}</UILayout>
+          </WebSocketProvider>
         </Provider>
       </body>
     </html>
