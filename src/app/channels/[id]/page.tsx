@@ -36,7 +36,7 @@ const Channel = async ({ params }: PropsType) => {
     <article className="flex flex-col gap-2 justify-center item center bg-white p-4">
       <ChannelDetails
         id={channel.id}
-        user_id={1}
+        user_id={channel.user_id}
         title={channel.title}
         cover={channel.cover}
         logo={channel.logo}

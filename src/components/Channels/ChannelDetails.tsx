@@ -8,6 +8,7 @@ import Link from "next/link";
 import { useSession } from "next-auth/react";
 import LoadMoreVideos from "../Videos/LoadMoreVideos";
 import LoadMoreChannelVideos from "./LoadMoreChannelVideos";
+import Subscribe from "../Videos/Subscibe";
 
 type PropTypes = {
   id: number;
@@ -34,8 +35,12 @@ const ChannelDetails = ({
   hasNextPage,
   videos,
   user_id,
+  is_subscribed,
 }: PropTypes) => {
   const searchParams = useSearchParams();
+  const [totalSubscriber, setTotalSubscriber] = useState(
+    total_subscriber ? total_subscriber : 0
+  );
   const [isAbout, setIsAbout] = useState(
     searchParams.get("about") ? true : false
   );
@@ -49,6 +54,33 @@ const ChannelDetails = ({
     ? "bg-slate-500 text-sm text-black/70 border-0 text-white px-4 py-3"
     : "bg-slate-300 text-sm text-black/70 border-0 px-4 py-3";
 
+  const handleSubscribe = (subType: number) => {
+    if (subType === 1) {
+      setTotalSubscriber((prev) => prev + 1);
+    } else {
+      setTotalSubscriber((prev) => {
+        if (prev > 0) return prev - 1;
+        return 0;
+      });
+    }
+  };
+
+  let authorBtn;
+
+  if (
+    (session?.user.id === user_id && session?.user.user_role === "author") ||
+    session?.user.user_role === "admin"
+  ) {
+    authorBtn = (
+      <Link
+        className="flex items-center w-fit ms-auto my-3 bg-violet-950 text-white hover:bg-violet-700 active:bg-violet-950 px-4 py-2 rounded-sm"
+        href="/dashboard/upload-video"
+      >
+        <span className="pr-2 text-xl font-bold">&#43;</span>Upload Video
+      </Link>
+    );
+  }
+
   let videoContent = null;
   if (videos.length > 0) {
     videoContent = videos.map((video: VideoType) => {
@@ -58,16 +90,7 @@ const ChannelDetails = ({
     videoContent = (
       <p className="w-full col-span-full flex flex-col justify-center items-center p-4 bg-red-200 text-red-500 rounded-lg mx-auto text-center gap-3">
         <span className="font-bold py-2">
-          No channels found! Please create a new one!{" "}
-          {session?.user.id === user_id ||
-            (session?.user.user_role === "admin" && (
-              <Link
-                className="block w-fit mx-auto mt-3 bg-violet-950 text-white hover:bg-violet-700 active:bg-violet-950 px-4 py-2 rounded-sm"
-                href="/dashboard/new-video"
-              >
-                Upload Video
-              </Link>
-            ))}
+          No Videos found! The author is not upload any video yet!
         </span>
       </p>
     );
@@ -97,15 +120,13 @@ const ChannelDetails = ({
         <div className="w-fit">
           <h1 className="text-xl mb-1 font-bold text-violet-800">{title}</h1>
           <span className="block text-xs font-normal text-gray-500 text-center mb-1">
-            {total_subscriber && total_subscriber}
+            {totalSubscriber} subscribers
           </span>
-          <Button
-            type="button"
-            btnClass="bg-red-600 text-sm p-1 text-white border-0"
-            style={{ borderRadius: "20px" }}
-          >
-            Subscribe
-          </Button>
+          <Subscribe
+            channel_id={id}
+            is_subscribed={is_subscribed}
+            onHandleSubscribed={handleSubscribe}
+          />
         </div>
         <div className="flex flex-row gap-2 justify-between rounded-3xl bg-slate-300 w-[250px] max-w-[100%] ms-auto  text-black">
           <button
@@ -121,15 +142,17 @@ const ChannelDetails = ({
             className={`${activeVideoBtnCls} rounded-[20px] disabled:opacity-50 disabled:cursor-not-allowed`}
             onClick={() => setIsAbout((prev) => !prev)}
             disabled={!isAbout}
-          >Videos
+          >
+            Videos
           </button>
         </div>
       </div>
+      {authorBtn}
       {!isAbout ? (
         <ul className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5 gap-4 mt-4 min-h-[500px]">
           {videoContent}
           <LoadMoreChannelVideos has_next_page={hasNextPage} id={id} />
-          </ul>
+        </ul>
       ) : (
         <p className="mt-4 min-h-[500px]">{description}</p>
       )}

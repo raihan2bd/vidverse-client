@@ -30,7 +30,7 @@ const VideoItem = ({ video }: VideoItemProps) => {
       <div className="text-xs text-slate-700 flex justify-between items-center p-2">
         <Link
           className="flex justify-between gap-3 items-center"
-          href={`/channel/${video.channel_id}`}
+          href={`/channels/${video.channel_id}`}
         >
           <div className="relative w-[24px] h-[24px] rounded-full">
             <Image
