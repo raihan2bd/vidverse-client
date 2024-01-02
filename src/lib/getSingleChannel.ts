@@ -1,6 +1,6 @@
-export default async (chanID: number) => {
+export default async (chanID: number, token: string) => {
   const API_URL = process.env.NEXT_PUBLIC_API_URL;
-  const response = await fetch(`${API_URL}/api/v1/channels/${chanID}`, { cache: 'no-store' });
+  const response = await fetch(`${API_URL}/api/v1/get_channel_with_details/${chanID}`, { cache: 'no-store', headers: { 'Authorization': token } });
   if(!response.ok) {
     if(response.status === 401) {
       // Logout the current user
