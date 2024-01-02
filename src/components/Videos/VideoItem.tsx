@@ -27,7 +27,7 @@ const VideoItem = ({ video }: VideoItemProps) => {
             : video.title}
         </h4>
       </Link>
-      <p className="text-xs text-slate-700 flex justify-between items-center p-2">
+      <div className="text-xs text-slate-700 flex justify-between items-center p-2">
         <Link
           className="flex justify-between gap-3 items-center"
           href={`/channel/${video.channel_id}`}
@@ -47,7 +47,7 @@ const VideoItem = ({ video }: VideoItemProps) => {
           {video.channel_title}
         </Link>
         <span className="text-gray-500">{`${video.views} views`}</span>
-      </p>
+      </div>
     </li>
   );
 };
