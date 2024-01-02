@@ -180,8 +180,7 @@ const UploadOrEditVideoForm = ({
       
       setSuccess(successMsg(response, "Video uploaded successfully!"));
       const video_id = response.data.video_id || videoDetails?.id;
-      // router.push(`/videos/${video_id}`); // redirect to video page
-      console.log(response.data)
+      router.push(`/videos${video_id? `/${video_id}`: ''}`); // redirect to video page
 
     } catch (error: any) {
       console.log(error);
