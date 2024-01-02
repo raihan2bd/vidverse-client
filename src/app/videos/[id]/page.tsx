@@ -48,7 +48,7 @@ const Video = async ({ params: { id } }: Props) => {
         <div className="flex gap-2 items-center justify-between p-4 bg-slate-100">
           <div className="flex gap-3 items-center text-sm">
             <img className="rounded-full border border-violet-800 p-[3px]" src={defaultThumb.src} alt="" width={42} height={42} />
-            <Link className="flex flex-col gap-1 text-sky-500 font-bold" href={`/channel/${video.channel.id}`}>{video.channel.title}
+            <Link className="flex flex-col gap-1 text-sky-500 font-bold" href={`/channels/${video.channel.id}`}>{video.channel.title}
             <span className="block text-xs font-normal text-gray-500">{video.channel.subscriptions? video.channel.subscriptions: 0} Subscribers</span>
             </Link>
           </div>
