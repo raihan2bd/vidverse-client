@@ -2,7 +2,7 @@
 
 import { Dispatch, SetStateAction, useState } from "react";
 import Link from "next/link";
-import LoginButton from "../UI/LoginButton";
+import AuthActionButtons from "../UI/AuthActionButtons";
 import { BiMenu } from "react-icons/bi";
 import { BiSearch } from "react-icons/bi";
 import { BsArrowLeftShort } from "react-icons/bs";
@@ -74,7 +74,7 @@ const Header = ({ onSetShowSideBar, showSideBar }: PropsTypes) => {
             <NotificationIcon />
           </li>}
           <li>
-            <LoginButton />
+            <AuthActionButtons />
           </li>
         </ul>
       </nav>
