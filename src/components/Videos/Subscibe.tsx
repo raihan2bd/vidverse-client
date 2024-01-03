@@ -6,7 +6,6 @@ import { useSession, signOut } from "next-auth/react";
 import { useRouter, usePathname } from "next/navigation";
 import { useGlobalState } from "@/context/store";
 import Button from "../UI/Button";
-import { on } from "events";
 
 type Props = {
   is_subscribed: boolean;
@@ -26,7 +25,7 @@ const Subscribe = ({ is_subscribed, channel_id, onHandleSubscribed }: Props) => 
 
   const handleSubscribe = async () => {
     if (!session || !session.user || !session.token) {
-      router.push(`/login?callbackUrl=${pathName}`);
+      router.push(`/login?callback=${pathName}`);
       return;
     }
     setLoading(true);
@@ -61,7 +60,7 @@ const Subscribe = ({ is_subscribed, channel_id, onHandleSubscribed }: Props) => 
         case 401:
           signOut();
           setError(messge);
-          router.push(`/login?callbackUrl=${pathName}`);
+          router.push(`/login?callback=${pathName}`);
           break;
         case 403:
           setError(messge);
@@ -76,11 +75,11 @@ const Subscribe = ({ is_subscribed, channel_id, onHandleSubscribed }: Props) => 
     }
   };
 
-  const btnClass = isSubscribed ? "border border-gray-500 text-gray-600" : "border-0 bg-red-600 text-white"
+  const btnClass = isSubscribed ? "border-gray-500 text-gray-600" : "bg-red-600 text-white border-red-500"
 
   return (
     <Button
-      className={`text-sm p-2 rounded-2xl hover:text-red-600 hover:bg-white hover:border-1 overflow-hidden ${btnClass}`}
+      className={`text-sm p-2 rounded-2xl hover:text-red-600 hover:bg-white border border-1 border-red-5000 overflow-hidden ${btnClass} transition-all duration-300 ease-in-out`}
       onClick={handleSubscribe}
       disabled={loading}
     >
