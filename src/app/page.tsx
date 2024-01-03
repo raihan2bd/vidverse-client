@@ -15,7 +15,6 @@ const Home = async () => {
         : error.message
         ? error.message
         : "Something went wrong";
-    console.log(error);
     return <CustomError message={errMsg} disableActionBtn={true} />;
   }
 
