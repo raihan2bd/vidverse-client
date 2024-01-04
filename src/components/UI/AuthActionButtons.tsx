@@ -30,7 +30,7 @@ const AuthActionButtons = () => {
         {session.user.user_role === "author" ||
         session.user.user_role === "admin" ? (
           <>
-            <li className="w-full">
+            <li className="w-full" onClick={() => setAuthModal(false)}>
               <Link
                 href="/dashboard/upload-video"
                 className="text-white bg-orange-400 rounded-sm hover:bg-orange-700 px-3 py-2 block w-full"
@@ -38,7 +38,7 @@ const AuthActionButtons = () => {
                 Upload Video
               </Link>
             </li>
-            <li className="w-full">
+            <li className="w-full" onClick={() => setAuthModal(false)}>
               <Link
                 href="/dashboard/new-channel"
                 className="text-white bg-orange-400 rounded-sm hover:bg-orange-700 px-3 py-2 block w-full"
@@ -46,18 +46,18 @@ const AuthActionButtons = () => {
                 Create Channel
               </Link>
             </li>
-            <li className="w-full">
+            <li className="w-full" onClick={() => setAuthModal(false)}>
               <Link
-                href="/channel"
+                href="/channels"
                 className="text-white bg-orange-400 rounded-sm hover:bg-orange-700 px-3 py-2 block w-full"
               >
-                My Channel
+                My Channels
               </Link>
             </li>
           </>
         ) : (
           <>
-            <li className="w-full">
+            <li className="w-full" onClick={() => setAuthModal(false)}>
               <Link
                 href="/contact-us?req_for=author"
                 className="text-white bg-orange-400 rounded-sm hover:bg-orange-700 px-3 py-2 block w-full"
@@ -72,6 +72,7 @@ const AuthActionButtons = () => {
             type="button"
             onClick={() => {
               signOut();
+              setAuthModal(false);
             }}
             className="bg-violet-600 text-white p-2 rounded-sm hover:bg-red-700 flex text-base w-full items-center gap-3"
           >

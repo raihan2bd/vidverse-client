@@ -5,7 +5,6 @@ import axios from "axios";
 import useDynamicInput from "@/hooks/useDynamicInput";
 import useFileInput from "@/hooks/useFileInput";
 import { validateInput, validateImage } from "@/utils/validator";
-import Spinner from "../UI/Spinner";
 import ErrorModal from "../UI/ErrorModal";
 import Input from "../UI/input";
 import Button from "../UI/Button";
@@ -160,9 +159,8 @@ const CreateORUpdateChannelForm = ({
     }
 
     try {
-      console.log("form data", formData)
+      setLoading(true);
       if (edit) {
-        setLoading(true);
         const res = await axios.patch(url, formData, {
           headers,
         });
@@ -214,8 +212,6 @@ const CreateORUpdateChannelForm = ({
           setError(errMsg);
           break;
       }
-    } finally {
-      setLoading(false);
     }
   };
 
