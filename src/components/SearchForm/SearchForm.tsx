@@ -1,4 +1,4 @@
-import { FormEvent, useEffect, useState, useCallback } from "react";
+import { FormEvent, useEffect, useState, useCallback, use } from "react";
 import { BiSearch } from "react-icons/bi";
 import { useSearchParams } from "next/navigation";
 import getAllVideos from "@/lib/getAllVideos";
@@ -13,10 +13,15 @@ const SearchForm = ({ onHideSearchBar }: PropsTypes) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [searchResults, setSearchResults] = useState<VideoType[]>([]);
   const [searchLoading, setSearchLoading] = useState(false);
+  const [isShowResult, setIsShowResult] = useState(true);
 
   const handleInputChange = useCallback((e: FormEvent<HTMLInputElement>) => {
     const value = (e.target as HTMLInputElement).value;
     setSearchTerm(value);
+  }, []);
+
+  const handleHideShowResult = useCallback(() => {
+    setIsShowResult(false);
   }, []);
 
   const handleSubmit = useCallback((e: FormEvent<HTMLFormElement>) => {
@@ -33,9 +38,10 @@ const SearchForm = ({ onHideSearchBar }: PropsTypes) => {
       const timeoutId = setTimeout(() => {
         const fetchSearchQuery = async () => {
           try {
-            const { videos } = await getAllVideos(1, searchTerm, 5);
+            const { videos } = await getAllVideos(1, searchTerm, 3);
             setSearchResults(videos);
             setSearchLoading(false);
+            setIsShowResult(true);
           } catch (error) {
             setSearchLoading(false);
           }
@@ -68,7 +74,7 @@ const SearchForm = ({ onHideSearchBar }: PropsTypes) => {
           </span>
         </button>
       </form>
-      <SearchResult searchResult={searchResults} searchLoading={searchLoading} searchTerm={searchTerm} />
+      {isShowResult && <SearchResult searchResult={searchResults} searchLoading={searchLoading} searchTerm={searchTerm} onHideResult={handleHideShowResult} />}
     </div>
   );
 };
