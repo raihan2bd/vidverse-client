@@ -1,17 +1,12 @@
-import Link  from "next/link";
-
 import getSingleVideo from "@/lib/getSingleVideo";
 import RelatedVideos from "@/components/Videos/RelatedVideos";
 import CommentList from "@/components/Videos/Comments/CommentList";
-import Button from "@/components/UI/Button";
 import PageNotFound from "@/components/UI/PageNotFound";
-import defaultThumb from "../../../../public/images/default-thumb.jpg";
 import { getServerSession,  } from "next-auth/next"
 import {authOptions} from '../../api/auth/[...nextauth]/route'
-import Subscribe from "@/components/Videos/Subscibe";
-import Like from '@/components/Videos/Like'
 import ResizeText from "@/components/Videos/ResizeText";
 import VideoAction from "@/components/Videos/VideoActions";
+import VideoChannelInfo from "@/components/Videos/VideoChannelInfo";
 
 type Props = {
   params: {
@@ -45,18 +40,7 @@ const Video = async ({ params: { id } }: Props) => {
 
         {adminContent}
 
-        <div className="flex gap-2 items-center justify-between p-4 bg-slate-100">
-          <div className="flex gap-3 items-center text-sm">
-            <img className="rounded-full border border-violet-800 p-[3px]" src={defaultThumb.src} alt="" width={42} height={42} />
-            <Link className="flex flex-col gap-1 text-sky-500 font-bold" href={`/channels/${video.channel.id}`}>{video.channel.title}
-            <span className="block text-xs font-normal text-gray-500">{video.channel.subscriptions? video.channel.subscriptions: 0} Subscribers</span>
-            </Link>
-          </div>
-
-          <Subscribe is_subscribed={video.channel.is_subscribed} channel_id={video.channel.id} />
-          <Like is_liked={video.is_liked} likesCount={video.likes} video_id={video.id} />
-          
-        </div>
+        <VideoChannelInfo channel_id={video.channel.id} channel_title={video.channel.title} channel_logo={video.channel.logo} total_subscriber={video.channel.subscriptions} is_subscribed={video.channel.is_subscribed} video_id={video.id} likes={video.likes} is_liked={video.is_liked} />
         
         <p className="max-w-[100%] text-gray-700 p-4" style={{
             overflowWrap: 'break-word',
