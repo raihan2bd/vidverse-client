@@ -72,12 +72,21 @@ const ChannelDetails = ({
     session?.user.user_role === "admin"
   ) {
     authorBtn = (
+      <div className="flex flex-row justify-between items-center gap-2">
+        <Link
+          className="flex items-center w-fit my-3 bg-violet-950 text-white hover:bg-violet-700 active:bg-violet-950 px-4 py-2 rounded-sm"
+          href={`/channels`}
+        >
+          <span className="pr-2 text-xl font-bold">&#9998;</span>Manage Channel
+        </Link>
       <Link
-        className="flex items-center w-fit ms-auto my-3 bg-violet-950 text-white hover:bg-violet-700 active:bg-violet-950 px-4 py-2 rounded-sm"
+        className="flex items-center w-fit my-3 bg-violet-950 text-white hover:bg-violet-700 active:bg-violet-950 px-4 py-2 rounded-sm"
         href="/dashboard/upload-video"
       >
         <span className="pr-2 text-xl font-bold">&#43;</span>Upload Video
       </Link>
+      </div>
+
     );
   }
 
@@ -107,7 +116,8 @@ const ChannelDetails = ({
           height={"200px"}
         />
       </div>
-      <div className="flex flex-row items-center gap-3">
+      <div className="flex flex-col justify-center items-stretch sm:flex-row sm:items-center gap-3">
+        <div className="flex flex-row gap-3 items-center">
         <div className="flex-shrink-0 w-[72px] h-[72px] bg-black/10 rounded-full overflow-hidden relative">
           <Image
             className="rounded-full p-[2px] border border-violet-950"
@@ -127,8 +137,9 @@ const ChannelDetails = ({
             is_subscribed={is_subscribed}
             onHandleSubscribed={handleSubscribe}
           />
+          </div>
         </div>
-        <div className="flex flex-row gap-2 justify-between rounded-3xl bg-slate-300 w-[250px] max-w-[100%] ms-auto  text-black">
+        <div className="flex flex-row gap-2 justify-between rounded-3xl bg-slate-300 w-full sm:w-[250px] max-w-[100%] ms-auto  text-black">
           <button
             type="button"
             className={`${activeAboutBtnCls} rounded-[20px] disabled:opacity-50 disabled:cursor-not-allowed`}
