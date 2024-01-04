@@ -6,7 +6,6 @@ import { useSearchParams } from "next/navigation";
 import VideoItem from "../Videos/VideoItem";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
-import LoadMoreVideos from "../Videos/LoadMoreVideos";
 import LoadMoreChannelVideos from "./LoadMoreChannelVideos";
 import Subscribe from "../Videos/Subscribe";
 
