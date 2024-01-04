@@ -5,7 +5,6 @@ import { usePathname, useParams } from "next/navigation";
 
 import Header from "./Header";
 import Sidebar from "./Sidebar";
-import Footer from "./Footer";
 import { useGlobalState } from "@/context/store";
 import Spinner from "../UI/Spinner";
 import ToastMessage from "../UI/ToastMessage";
@@ -16,7 +15,7 @@ interface PropTypes {
 }
 
 const UILayout = ({ children }: PropTypes) => {
-  const { status } = useSession();
+  const { status, data:session } = useSession();
 
   const [showSideBar, setShowSideBar] = useState(false);
   const pathname = usePathname();
@@ -57,12 +56,12 @@ const UILayout = ({ children }: PropTypes) => {
     : "w-[100%]";
 
   let sidebarClasses = showSideBar
-    ? "block md:hidden fixed pt-[5rem] left-0 bottom-0 z-10 h-screen w-[100%] bg-white md:w-1/5 md:min-w-[280px] overflow-y-scroll thin-scrollbar text-black"
-    : "hidden md:block fixed pt-[5rem] left-0 bottom-0 z-10 h-screen w-[100%] bg-white md:w-[23%] overflow-y-scroll thin-scrollbar text-black";
+    ? "block md:hidden fixed pt-[5rem] left-0 bottom-0 z-10 h-screen w-[100%] md:w-1/5 md:min-w-[280px] thin-scrollbar text-black"
+    : "hidden md:block fixed pt-[5rem] left-0 bottom-0 z-10 h-screen w-[100%] md:w-[23%] thin-scrollbar text-black";
 
   if (pathname === `/videos/${params.id}`) {
     sidebarClasses = showSideBar
-      ? "block fixed pt-[5rem] left-0 bottom-0 z-10 h-screen w-[100%] md:w-1/5 bg-white overflow-y-scroll thin-scrollbar text-black md:min-w-[280px]"
+      ? "block fixed pt-[5rem] left-0 bottom-0 z-10 h-screen w-[100%] md:w-1/5 thin-scrollbar text-black md:min-w-[280px]"
       : "hidden";
 
     mainContentCls = "w-full";
@@ -78,7 +77,7 @@ const UILayout = ({ children }: PropTypes) => {
     <>
       <Header onSetShowSideBar={setShowSideBar} showSideBar={showSideBar} />
       <main className="pt-20 flex gap-4 items-center">
-        <Sidebar sidebarClasses={sidebarClasses} />
+        <Sidebar sidebarClasses={sidebarClasses} onHideSidebar={hideSideBarHandler} user_id={session?.user.id} user_role={session?.user.user_role} />
         <div className={mainContentCls}>
           <ToastMessage
             error={error}
@@ -87,7 +86,6 @@ const UILayout = ({ children }: PropTypes) => {
           />
           {loadingSpinner}
           {children}
-          <Footer />
         </div>
       </main>
     </>

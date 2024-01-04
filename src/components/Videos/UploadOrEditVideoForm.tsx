@@ -33,7 +33,7 @@ const UploadOrEditVideoForm = ({
     setSuccess,
     setError,
     setLoading,
-    uiState: { error, loading },
+    uiState: { loading },
   } = useGlobalState();
   const router = useRouter();
 
@@ -183,7 +183,6 @@ const UploadOrEditVideoForm = ({
       router.push(`/videos${video_id? `/${video_id}`: ''}`); // redirect to video page
 
     } catch (error: any) {
-      console.log(error);
       const {errMsg: msg, status} = errMsgWithStatus(error);
       switch (status) {
         case 401:
@@ -198,6 +197,8 @@ const UploadOrEditVideoForm = ({
           setError(msg);
           break;
       }
+    } finally {
+      setLoading(false);
     }
   };
 

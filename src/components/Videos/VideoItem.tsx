@@ -19,6 +19,7 @@ const VideoItem = ({ video }: VideoItemProps) => {
             sizes="630px"
             fill={true}
             className="z-[1]"
+            priority={true}
           />
         </div>
         <h4 className="text-sky-700 text-sm font-bold p-2">
@@ -42,6 +43,7 @@ const VideoItem = ({ video }: VideoItemProps) => {
               alt={video.channel_title}
               fill={true}
               className="rounded-full"
+              sizes="24px"
             />
           </div>{" "}
           {video.channel_title}
