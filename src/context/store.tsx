@@ -103,7 +103,6 @@ export const WebSocketProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     if (session && !socketRef.current) {
-      console.log('session', session)
       const token = session.token;
       const newSocket = new ReconnectingWebSocket(
         `ws://${SOCKET_URL}/api/v1/ws?token=${token}`,
