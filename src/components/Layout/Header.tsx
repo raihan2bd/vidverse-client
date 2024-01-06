@@ -1,6 +1,12 @@
 "use client";
 
-import { Dispatch, SetStateAction, useState } from "react";
+import {
+  Dispatch,
+  SetStateAction,
+  useCallback,
+  useMemo,
+  useState,
+} from "react";
 import Link from "next/link";
 import AuthActionButtons from "../UI/AuthActionButtons";
 import { BiMenu } from "react-icons/bi";
@@ -17,7 +23,7 @@ interface PropsTypes {
 }
 
 const Header = ({ onSetShowSideBar, showSideBar }: PropsTypes) => {
-  const {data: session} = useSession()
+  const { data: session } = useSession();
   const [showSearchBar, setShowSearchBar] = useState(false);
 
   const showSearchBarHandler = () => setShowSearchBar(true);
@@ -32,27 +38,67 @@ const Header = ({ onSetShowSideBar, showSideBar }: PropsTypes) => {
     ? "text-2xl text-red-400 font-black"
     : "text-2xl text-white font-black";
 
-    // search bar
-    let mobileSearchBarContent = (<div className="flex sm:hidden gap-2 items-center ms-auto">
-    <button onClick={showSearchBarHandler} className="p-2 bg-violet-600 rounded-lg h-full transform hover:translate-y-0 hover:translate-x-1">
-      <span className="text-2xl">
-        <BiSearch />
-      </span>
-    </button>
-  </div>)
+  // Search bar
+let mobileSearchBarContent;
 
-  if(showSearchBar) {
-    mobileSearchBarContent = (
-      <div className="left-0 px-6 fixed z-50 w-[100%] h-[5rem] bg-violet-900 flex sm:hidden gap-2 items-center ms-auto justify-between">
-        <button onClick={hideSearchBarHandler} className="h-fit p-2 bg-red-300 rounded-lg transform hover:translate-y-0 hover:translate-x-1">
-          <span className="text-2xl">
-            <BsArrowLeftShort />
-          </span>
-        </button>
-        <SearchForm onHideSearchBar={hideSearchBarHandler} />
-      </div>
-    )
-  }
+if (!showSearchBar) {
+  mobileSearchBarContent = (
+    <div className="flex sm:hidden gap-2 items-center ms-auto">
+      <button
+        onClick={showSearchBarHandler}
+        className="p-2 bg-violet-600 rounded-lg h-full transform hover:translate-y-0 hover:translate-x-1"
+      >
+        <span className="text-2xl">
+          <BiSearch />
+        </span>
+      </button>
+    </div>
+  );
+} else {
+  mobileSearchBarContent = (
+    <div className="left-0 px-6 fixed z-50 w-[100%] h-[5rem] bg-violet-900 flex sm:hidden gap-2 items-center ms-auto justify-between">
+      <button
+        onClick={hideSearchBarHandler}
+        className="h-fit p-2 bg-red-300 rounded-lg transform hover:translate-y-0 hover:translate-x-1"
+      >
+        <span className="text-2xl">
+          <BsArrowLeftShort />
+        </span>
+      </button>
+      <SearchForm onHideSearchBar={hideSearchBarHandler} />
+    </div>
+  );
+}
+
+
+  const customSession = useMemo(() => {
+    if (!session) return null;
+    if (!session.user) return null;
+
+    const { id, user_name, user_role, avatar } = session.user;
+    return { id, user_name, user_role, avatar };
+  }, [session]);
+
+  const authNavigationContent = useMemo(() => {
+    if (customSession && customSession.id) {
+      return (
+        <>
+          <li className="relative p-2 flex justify-center items-center">
+            <NotificationIcon />
+          </li>
+          <li>
+            <AuthActionButtons session={customSession} />
+          </li>
+        </>
+      );
+    }
+
+    return (
+      <li>
+        <AuthActionButtons session={null} />
+      </li>
+    );
+  }, [customSession]);
 
   return (
     <header className="flex flex-row justify-between gap-2 p-4 md:px-6 bg-violet-900 text-white items-center fixed w-[100%] h-[5rem] z-50">
@@ -66,16 +112,11 @@ const Header = ({ onSetShowSideBar, showSideBar }: PropsTypes) => {
       </div>
       {mobileSearchBarContent}
       <div className="hidden sm:flex gap-2 items-center">
-        <SearchForm onHideSearchBar={hideSearchBarHandler}/>
+        <SearchForm onHideSearchBar={hideSearchBarHandler} />
       </div>
       <nav>
         <ul className="flex flex-row gap-2 justify-center items-center">
-         {session?.user && <li className="relative p-2 flex justify-center items-center">
-            <NotificationIcon />
-          </li>}
-          <li>
-            <AuthActionButtons />
-          </li>
+       { authNavigationContent }
         </ul>
       </nav>
     </header>

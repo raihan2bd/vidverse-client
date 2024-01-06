@@ -9,6 +9,7 @@ const API_URL = process.env.NEXT_PUBLIC_SOCKET_API
 const NotificationIcon = () => {
   const {notifications} = useGlobalState()
   const [showNotification, setShowNotification] = useState(false)
+  console.log(notifications)
   
 
   const spinner = <span className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></span>

@@ -6,6 +6,7 @@ import React, {
   ReactNode,
   useEffect,
   useCallback,
+  useRef,
 } from "react";
 import ReconnectingWebSocket from "reconnecting-websocket";
 import { useSession, signOut } from "next-auth/react";
@@ -40,7 +41,8 @@ const SOCKET_URL = process.env.NEXT_PUBLIC_SOCKET_API;
 export const WebSocketProvider = ({ children }: { children: ReactNode }) => {
   const [socket, setSocket] = React.useState<ReconnectingWebSocket | null>(
     null
-  );
+    );
+  const socketRef = useRef<ReconnectingWebSocket | null>(null);
   const [notifications, setNotifications] = useState<any | null>(null);
   const [uiState, setUiState] = useState<UIState>({
     success: false,
@@ -98,8 +100,10 @@ export const WebSocketProvider = ({ children }: { children: ReactNode }) => {
 
   const { data: session } = useSession();
 
+
   useEffect(() => {
-    if (session && !socket) {
+    if (session && !socketRef.current) {
+      console.log('session', session)
       const token = session.token;
       const newSocket = new ReconnectingWebSocket(
         `ws://${SOCKET_URL}/api/v1/ws?token=${token}`,
@@ -108,59 +112,64 @@ export const WebSocketProvider = ({ children }: { children: ReactNode }) => {
           debug: true,
           maxRetries: 5,
         }
-      );
+        );
+        socketRef.current = newSocket;
       setSocket(newSocket);
     }
-  }, [session, socket]);
+  }, [session]);
 
   useEffect(() => {
-    if (!socket) return;
-    socket.onmessage = (messageEvent) => {
+    if (!socketRef.current) return;
+    socketRef.current.onmessage = (messageEvent) => {
       const data: any = JSON.parse(messageEvent.data);
-      console.log('data-action', data.action)
-      switch (data.action) {
-        case "notifications":
-          setNotifications(data.data);
-          break;
-        case "a_new_notification":
-          setNotifications((prevState: any) => [...prevState, data.data]);
-          break;
-        case "unauthorized":
-          socket.close();
-          signOut();
-          break;
-        default:
-          break;
+      console.log('data-action', data.action);
+      if (socketRef.current) {
+        switch (data.action) {
+          case "notifications":
+            setNotifications(data.data);
+            break;
+          case "a_new_notification":
+            setNotifications((prevState: any) => [...prevState, data.data]);
+            break;
+          case "unauthorized":
+            socketRef.current.close();
+            signOut();
+            break;
+          default:
+            break;
+        }
       }
     };
 
     if (typeof window !== "undefined") {
       window.onbeforeunload = function () {
-        if (!socket) return
+        if (!socketRef.current) return
         const wsPayload = {
           action: "close",
         };
-        socket.send(JSON.stringify(wsPayload));
+        socketRef.current.send(JSON.stringify(wsPayload));
       };
     };
 
-    socket.onclose = () => {
+    socketRef.current.onclose = () => {
       setSocket(null);
       if (!notifications ) {
         setNotifications([])
       }
     }
 
-    socket.onerror = (error) => {
+    socketRef.current.onerror = (error) => {
       console.log("Socket error", error);
-      socket.close();
+      if (socketRef.current) {
+        socketRef.current.close();
+      }
       setSocket(null);
       if (!notifications ) {
         setNotifications([])
       }
     };
 
-  }, [socket]);
+  }, [socketRef.current]);
 
   useEffect(() => {
     if (uiState.success || uiState.error) {

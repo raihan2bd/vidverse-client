@@ -1,6 +1,5 @@
 "use client";
-import { useSession } from "next-auth/react";
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { signOut } from "next-auth/react";
 import Link from "next/link";
 import Button from "./Button";
@@ -8,27 +7,29 @@ import { IoMdExit } from "react-icons/io";
 import Image from "next/image";
 import { FaUserCircle } from "react-icons/fa";
 
-const AuthActionButtons = () => {
-  const { data: session } = useSession();
-  const [authModal, setAuthModal] = React.useState(false);
+type PropsTypes = {
+  session: {
+    id: number;
+    user_name: string;
+    user_role: string;
+    avatar: string;
+} | null
+}
 
-  useEffect(() => {
-    if (session?.error === "RefreshAccessTokenError") {
-      signOut();
-    }
-  }, [session]);
+const AuthActionButtons = ({session}: PropsTypes) => {
+  const [authModal, setAuthModal] = useState(false);
 
   const authNavigationContent = useMemo(() => {
     if (!session) return;
-    if (!session.user) return;
+    if (!session.id) return;
 
     return (
       <ul className="flex flex-col gap-2 items-center list-none w-[200px] absolute z-1 top-[52px] bg-white right-[0.5rem] rounded-lg border border-orange-300 pb-1">
         <p className="text-xs p-2 bg-black/10 text-violet-950 w-full text-center">
-          Welcome back {session.user.user_name}
+          Welcome back {session.user_name}
         </p>
-        {session.user.user_role === "author" ||
-        session.user.user_role === "admin" ? (
+        {session.user_role === "author" ||
+        session.user_role === "admin" ? (
           <>
             <li className="w-full" onClick={() => setAuthModal(false)}>
               <Link
@@ -83,7 +84,7 @@ const AuthActionButtons = () => {
     );
   }, [session]);
 
-  if (session && session.user)
+  if (session && session.id)
     return (
       <div className="flex ml-auto items-center relative">
         <Button
@@ -95,8 +96,8 @@ const AuthActionButtons = () => {
           className="rounded-full"
         >
           <Image
-            src={session.user.avatar}
-            alt={session.user.user_name}
+            src={session.avatar}
+            alt={session.user_name}
             width={32}
             height={32}
             className={`rounded-full p-1 border border-white first-letter:${
