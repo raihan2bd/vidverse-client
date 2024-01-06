@@ -11,7 +11,8 @@ import { errMsgWithStatus } from "@/utils/responseMsg";
 import Spinner from "../UI/Spinner";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
-const NotificationIcon = ({token}: {token: string | undefined}) => {
+
+const Notifications = ({token}: {token: string | undefined}) => {
   const [notifications, setNotifications] = useState<NotificationType[]| null >(null)
   const [loading, setLoading] = useState(false);
   const [showNotification, setShowNotification] = useState(false);
@@ -22,6 +23,7 @@ const NotificationIcon = ({token}: {token: string | undefined}) => {
 
   const dismissHandler = async (id: number) => {
     // Todo: dismiss notification
+    setShowNotification(false)
   };
 
   const fetchNotifications =useCallback(async () => {
@@ -122,14 +124,14 @@ const NotificationIcon = ({token}: {token: string | undefined}) => {
       );
     }
     return <span className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></span>
-  }, [totalNotification]);
+  }, [totalNotification, showNotification]);
 
 
   const pageContent = useMemo(() => {
     return (
       <div className="relative p-2 flex justify-center items-center">
         {showNotification && (
-          <ul className="flex flex-col gap-2 items-center list-none w-[350px] min-h-[200px] absolute z-1 top-[52px] bg-white right-[0.5rem] rounded-lg border border-orange-300 pb-1">
+          <ul className="flex flex-col gap-2 items-center list-none w-[350px] min-h-[200px] absolute z-1 top-[52px] bg-white right-[0.5rem] rounded-lg border border-orange-300 py-2">
             {notificationItems}
           </ul>
         )}
@@ -139,12 +141,12 @@ const NotificationIcon = ({token}: {token: string | undefined}) => {
   }, [notifications, showNotification, totalNotification]);
 
   useEffect(() => {
-    if (showNotification && notifications === null && totalNotification && totalNotification > 0) {
-      fetchNotifications();
+    if (showNotification ) {
+      fetchNotifications()
     }
-  }, [notifications, showNotification, totalNotification]);
+  }, [totalNotification]);
 
   return pageContent;
 };
 
-export default NotificationIcon;
+export default Notifications;
