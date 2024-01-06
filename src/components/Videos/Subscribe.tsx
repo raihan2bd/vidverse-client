@@ -37,21 +37,9 @@ const Subscribe = ({ is_subscribed, channel_id, onHandleSubscribed }: Props) => 
         },
       });
       if (onHandleSubscribed) {
-        onHandleSubscribed(isSubscribed? 1 : 0);
+        onHandleSubscribed(isSubscribed? 0 : 1);
       }
-      setIsSubscribe((prev) => {
-        if (prev) {
-          if (onHandleSubscribed) {
-            onHandleSubscribed(0);
-          }
-        } else {
-          if (onHandleSubscribed) {
-            onHandleSubscribed(1);
-          }
-        }
-
-        return !prev;
-      });
+      setIsSubscribe((prev) => !prev);
     } catch (error: any) {
       const messge =
         error.response.data.error || error.message || "Something went wrong";
