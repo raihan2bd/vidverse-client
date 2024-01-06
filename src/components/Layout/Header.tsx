@@ -8,7 +8,7 @@ import { BiSearch } from "react-icons/bi";
 import { BsArrowLeftShort } from "react-icons/bs";
 
 import SearchForm from "../SearchForm/SearchForm";
-import NotificationIcon from "./Notification/NotificationIcon";
+import NotificationIcon from "../Notification/NotificationIcon";
 import { useSession } from "next-auth/react";
 
 interface PropsTypes {
