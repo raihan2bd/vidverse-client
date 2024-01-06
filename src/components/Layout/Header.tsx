@@ -14,7 +14,7 @@ import { BiSearch } from "react-icons/bi";
 import { BsArrowLeftShort } from "react-icons/bs";
 
 import SearchForm from "../SearchForm/SearchForm";
-import NotificationIcon from "../Notification/NotificationIcon";
+import Notifications from "../Notifications/Notifications";
 import { useSession } from "next-auth/react";
 
 interface PropsTypes {
@@ -84,7 +84,7 @@ if (!showSearchBar) {
       return (
         <>
           <li className="relative p-2 flex justify-center items-center">
-            <NotificationIcon />
+            <Notifications token={session?.token} />
           </li>
           <li>
             <AuthActionButtons session={customSession} />

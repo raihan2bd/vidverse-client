@@ -20,7 +20,8 @@ type UIState = {
 
 const WebSocketContext = createContext<{
   socket: ReconnectingWebSocket | null;
-  notifications: [];
+  totalNotification: null | number;
+  newNotification: null | NotificationType;
   uiState: UIState;
   setSuccess: (value: string) => void;
   setError: (value: string) => void;
@@ -28,7 +29,8 @@ const WebSocketContext = createContext<{
   resetUiState: () => void;
 }>({
   socket: null,
-  notifications: [],
+  totalNotification: null,
+  newNotification: null,
   uiState: { success: false, error: false, message: null, loading: false },
   setSuccess: () => {},
   setError: () => {},
@@ -43,7 +45,8 @@ export const WebSocketProvider = ({ children }: { children: ReactNode }) => {
     null
     );
   const socketRef = useRef<ReconnectingWebSocket | null>(null);
-  const [notifications, setNotifications] = useState<any | null>(null);
+  const [totalNotification, setTotalNotification] = useState<null | number>(null)
+  const [newNotification, setNewNotification] = useState<null | NotificationType>(null)
   const [uiState, setUiState] = useState<UIState>({
     success: false,
     error: false,
@@ -121,14 +124,15 @@ export const WebSocketProvider = ({ children }: { children: ReactNode }) => {
     if (!socketRef.current) return;
     socketRef.current.onmessage = (messageEvent) => {
       const data: any = JSON.parse(messageEvent.data);
-      console.log('data-action', data.action);
       if (socketRef.current) {
         switch (data.action) {
           case "notifications":
-            setNotifications(data.data);
+            const count = !isNaN(data.data) ? data.data : 0
+            setTotalNotification(data.data)
             break;
           case "a_new_notification":
-            setNotifications((prevState: any) => [...prevState, data.data]);
+            setTotalNotification((prev) => prev ? prev + 1 : 1)
+            setNewNotification(data.data)
             break;
           case "unauthorized":
             socketRef.current.close();
@@ -152,19 +156,20 @@ export const WebSocketProvider = ({ children }: { children: ReactNode }) => {
 
     socketRef.current.onclose = () => {
       setSocket(null);
-      if (!notifications ) {
-        setNotifications([])
+      socketRef.current = null;
+      if (!totalNotification ) {
+        setTotalNotification(0)
       }
     }
 
     socketRef.current.onerror = (error) => {
-      console.log("Socket error", error);
       if (socketRef.current) {
         socketRef.current.close();
       }
       setSocket(null);
-      if (!notifications ) {
-        setNotifications([])
+      socketRef.current = null;
+      if (!totalNotification ) {
+        setTotalNotification(0)
       }
     };
 
@@ -183,7 +188,8 @@ export const WebSocketProvider = ({ children }: { children: ReactNode }) => {
     <WebSocketContext.Provider
       value={{
         socket,
-        notifications,
+        totalNotification,
+        newNotification,
         uiState,
         setSuccess,
         setError,
