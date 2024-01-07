@@ -17,6 +17,7 @@ import axios from "axios";
 import { errMsgWithStatus } from "@/utils/responseMsg";
 import Spinner from "../UI/Spinner";
 import LoadMoreNotifications from "./LoadMoreNotifications";
+import {signOut} from 'next-auth/react';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -33,9 +34,55 @@ const Notifications = ({ token }: { token: string | undefined }) => {
   const { setError } = useGlobalState();
   const router = useRouter();
 
+  const toggleNotificationHandler: () => void = useCallback(() => {
+    let reset = false;
+    setShowNotification((prev) => {
+      reset = prev;
+      return !prev;
+    });
+    if (reset) {
+      setNotifications(null);
+      setPage(0);
+      setHasNextPage(false);
+    }
+  }, [setShowNotification, setNotifications, setPage, setHasNextPage]);
+
   const dismissHandler = async (id: number) => {
-    // Todo: dismiss notification
+    if (!token) {
+      setError("You are not logged in");
+      router.push("/login");
+      return;
+    }
+
+    // check if notification is already read
+    const notification = notifications?.find((notification) => notification.id === id);
+    if (notification?.is_read) {
+      return;
+    }
+
+    try {
+      await axios.patch(`${API_URL}/api/v1/notifications/${id}`, {}, {
+        headers: {
+          Authorization: token,
+        },
+      });
+    } catch (error: any) {
+      const { errMsg, status } = errMsgWithStatus(error);
+      switch (status) {
+        case 401:
+          signOut();
+          router.push("/login");
+          setError(errMsg);
+          break;
+        default:
+          break;
+      }
+    } finally {
     setShowNotification(false);
+      setNotifications(null);
+      setPage(0);
+      setHasNextPage(false);
+    }
   };
 
   const fetchNotifications = useCallback(
@@ -74,6 +121,7 @@ const Notifications = ({ token }: { token: string | undefined }) => {
         const { errMsg, status } = errMsgWithStatus(error);
         switch (status) {
           case 401:
+            signOut();
             router.push("/login");
             setError(errMsg);
             break;
@@ -143,7 +191,7 @@ const Notifications = ({ token }: { token: string | undefined }) => {
           // disabled translate
           style={{transform: 'none'}}
           className={`block rounded-full overflow-hidden focus:outline-none text-2xl ${showNotification ? " bg-orange-400" : " bg-transparent"}`}
-          onClick={() => setShowNotification(!showNotification)}
+          onClick={toggleNotificationHandler}
         >
           <IoMdNotifications />
           {totalNotification > 0 && (
@@ -177,7 +225,7 @@ const Notifications = ({ token }: { token: string | undefined }) => {
     if (showNotification && !notifications) {
       fetchNotifications();
     }
-  }, [showNotification, fetchNotifications]);
+  }, [showNotification, fetchNotifications, notifications]);
 
   return pageContent;
 };
