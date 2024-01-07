@@ -2,65 +2,91 @@
 
 import Button from "@/components/UI/Button";
 import { useGlobalState } from "@/context/store";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import {
+  Dispatch,
+  SetStateAction,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import { IoMdNotifications } from "react-icons/io";
 import NotificationItem from "./NotificationItem";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import { errMsgWithStatus } from "@/utils/responseMsg";
 import Spinner from "../UI/Spinner";
+import LoadMoreNotifications from "./LoadMoreNotifications";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
-const Notifications = ({token}: {token: string | undefined}) => {
-  const [notifications, setNotifications] = useState<NotificationType[]| null >(null)
+const Notifications = ({ token }: { token: string | undefined }) => {
+  const [notifications, setNotifications] = useState<NotificationType[] | null>(
+    null
+  );
   const [loading, setLoading] = useState(false);
   const [showNotification, setShowNotification] = useState(false);
-  const {totalNotification, newNotification} = useGlobalState();
+  const { totalNotification, newNotification } = useGlobalState();
+  const [has_next_page, setHasNextPage] = useState(false);
+  const [page, setPage] = useState(0);
 
-  const {setError} = useGlobalState();
+  const { setError } = useGlobalState();
   const router = useRouter();
 
   const dismissHandler = async (id: number) => {
     // Todo: dismiss notification
-    setShowNotification(false)
+    setShowNotification(false);
   };
 
-  const fetchNotifications =useCallback(async () => {
-    if (!token) {
-      router.push("/login");
-      return;
-    }
-
-    try {
-      setLoading(true);
-      const res = await axios.get(`${API_URL}/api/v1/notifications`, {
-        headers: {
-          Authorization: token,
-        },
-      });
-      if (Array.isArray(res.data.notifications)) {
-        setNotifications(res.data.notifications);
-      } else {
-        setNotifications([]);
+  const fetchNotifications = useCallback(
+    async (
+      setPending: Dispatch<SetStateAction<boolean>> = setLoading
+    ) => {
+      if (!token) {
+        router.push("/login");
+        return;
       }
-    } catch (error: any) {
-      console.log(error);
-      const {errMsg, status} = errMsgWithStatus(error);
-      switch (status) {
-        case 401:   
-          router.push("/login");
-          setError(errMsg);
-          break;
-        default:
-          setError(errMsg);
-          break;
-      }
-    } finally {
-      setLoading(false);
-    }
 
-  }, [])
+      try {
+        setPending(true);
+        const res = await axios.get(
+          `${API_URL}/api/v1/notifications?page=${page + 1}`,
+          {
+            headers: {
+              Authorization: token,
+            },
+          }
+        );
+        if (Array.isArray(res.data.notifications)) {
+          if (notifications && page >= 1) {
+            setNotifications([...notifications, ...res.data.notifications]);
+          } else {
+            setNotifications(res.data.notifications);
+          }
+          setHasNextPage(res.data.has_next_page);
+          setPage(res.data.page);
+        } else {
+          setNotifications([]);
+          setHasNextPage(false);
+        }
+      } catch (error: any) {
+        console.log(error);
+        const { errMsg, status } = errMsgWithStatus(error);
+        switch (status) {
+          case 401:
+            router.push("/login");
+            setError(errMsg);
+            break;
+          default:
+            setError(errMsg);
+            break;
+        }
+      } finally {
+        setPending(false);
+      }
+    },
+    [loading, setLoading, setError, router, token, setHasNextPage, setPage, setNotifications, notifications, page]
+  );
 
   const notificationItems = useMemo(() => {
     if (loading) {
@@ -71,7 +97,6 @@ const Notifications = ({token}: {token: string | undefined}) => {
       );
     }
     if (notifications && notifications.length > 0) {
-
       return notifications.map((notification) => {
         const notificationType = notification.type
           ? notification.type
@@ -95,6 +120,10 @@ const Notifications = ({token}: {token: string | undefined}) => {
                 ? `/videos/${notification.video_id}`
                 : `/channels/${notification.channel_id}`
             }
+            thumb={notification.thumb}
+            sender_avatar={notification.sender_avatar}
+            is_read={notification.is_read? true : false}
+            createdAt={notification.created_at}
           />
         );
       });
@@ -110,41 +139,45 @@ const Notifications = ({token}: {token: string | undefined}) => {
     if (totalNotification !== null) {
       return (
         <Button
-            type="button"
-            className="block rounded-full overflow-hidden focus:outline-none text-2xl"
-            onClick={() => setShowNotification(!showNotification)}
-          >
-            <IoMdNotifications />
-            {totalNotification > 0 && (
-          <span className="absolute top-[2px] right-[2px] bg-red-500 text-white text-xs rounded-full px-1">
-            {totalNotification}
-          </span>
-        )}
-          </Button>
+          type="button"
+          // disabled translate
+          style={{transform: 'none'}}
+          className={`block rounded-full overflow-hidden focus:outline-none text-2xl ${showNotification ? " bg-orange-400" : " bg-transparent"}`}
+          onClick={() => setShowNotification(!showNotification)}
+        >
+          <IoMdNotifications />
+          {totalNotification > 0 && (
+            <span className="absolute top-[2px] right-[2px] bg-red-500 text-white text-xs rounded-full px-1">
+              {totalNotification}
+            </span>
+          )}
+        </Button>
       );
     }
-    return <span className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></span>
+    return (
+      <span className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></span>
+    );
   }, [totalNotification, showNotification]);
-
 
   const pageContent = useMemo(() => {
     return (
       <div className="relative p-2 flex justify-center items-center">
         {showNotification && (
-          <ul className="flex flex-col gap-2 items-center list-none w-[350px] min-h-[200px] absolute z-1 top-[52px] bg-white right-[0.5rem] rounded-lg border border-orange-300 py-2">
+          <ul className="flex flex-col gap-1 items-center list-none w-[350px] max-w-[100vw] h-[calc(100vh-7rem)] overflow-y-scroll fixed z-1 top-[63px] bg-violet-500/95 right-0 md:right-[2rem] rounded-lg border border-black/50 shadow-lg m-1 no-scrollbar backdrop-blur-[2px]">
             {notificationItems}
+            {has_next_page && <LoadMoreNotifications fetchNotifications={fetchNotifications} />}
           </ul>
         )}
         {notificationBadge}
       </div>
     );
-  }, [notifications, showNotification, totalNotification]);
+  }, [notifications, showNotification, totalNotification, has_next_page, fetchNotifications, page]);
 
   useEffect(() => {
-    if (showNotification ) {
-      fetchNotifications()
+    if (showNotification && !notifications) {
+      fetchNotifications();
     }
-  }, [totalNotification]);
+  }, [showNotification, fetchNotifications]);
 
   return pageContent;
 };
