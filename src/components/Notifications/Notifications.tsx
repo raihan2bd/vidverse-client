@@ -47,8 +47,17 @@ const Notifications = ({ token }: { token: string | undefined }) => {
     }
   }, [setShowNotification, setNotifications, setPage, setHasNextPage]);
 
+  const hideNotificationHandler = useCallback(() => {
+    setShowNotification(false);
+    setNotifications(null);
+    setPage(0);
+    setHasNextPage(false);
+  }
+  , [setShowNotification, setNotifications, setPage, setHasNextPage]);
+
   const dismissHandler = async (id: number) => {
     if (!token) {
+      hideNotificationHandler();
       setError("You are not logged in");
       router.push("/login");
       return;
@@ -57,6 +66,7 @@ const Notifications = ({ token }: { token: string | undefined }) => {
     // check if notification is already read
     const notification = notifications?.find((notification) => notification.id === id);
     if (notification?.is_read) {
+      hideNotificationHandler();
       return;
     }
 
@@ -78,10 +88,7 @@ const Notifications = ({ token }: { token: string | undefined }) => {
           break;
       }
     } finally {
-    setShowNotification(false);
-      setNotifications(null);
-      setPage(0);
-      setHasNextPage(false);
+      hideNotificationHandler();
     }
   };
 
