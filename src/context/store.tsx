@@ -27,6 +27,7 @@ const WebSocketContext = createContext<{
   setError: (value: string) => void;
   setLoading: (value: boolean) => void;
   resetUiState: () => void;
+  clearNewNotification: () => void;
 }>({
   socket: null,
   totalNotification: null,
@@ -36,6 +37,7 @@ const WebSocketContext = createContext<{
   setError: () => {},
   setLoading: () => {},
   resetUiState: () => {},
+  clearNewNotification: () => {},
 });
 
 const SOCKET_URL = process.env.NEXT_PUBLIC_SOCKET_API;
@@ -101,6 +103,10 @@ export const WebSocketProvider = ({ children }: { children: ReactNode }) => {
     []
   );
 
+  const clearNewNotification = useCallback(() => {
+    setNewNotification(null)
+  }, [setNewNotification])
+
   const { data: session } = useSession();
 
 
@@ -131,8 +137,8 @@ export const WebSocketProvider = ({ children }: { children: ReactNode }) => {
             setTotalNotification(data.data)
             break;
           case "a_new_notification":
-            setTotalNotification((prev) => prev ? prev + 1 : 1)
-            setNewNotification(data.data)
+            setTotalNotification(data.data.total_new_notification)
+            setNewNotification(data.data.notification)
             break;
           case "unauthorized":
             socketRef.current.close();
@@ -195,6 +201,7 @@ export const WebSocketProvider = ({ children }: { children: ReactNode }) => {
         setError,
         setLoading,
         resetUiState,
+        clearNewNotification,
       }}
     >
       {children}
