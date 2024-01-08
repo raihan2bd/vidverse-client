@@ -13,7 +13,7 @@ type PropsTypes = {
 }
 
 const NotificationItem = ({link, title, onDismiss, thumb, sender_avatar, createdAt, is_read}:PropsTypes) => {
-  return (<li className="w-full relative" onClick={onDismiss}>
+  return (<li className="w-full relative list-none" onClick={onDismiss}>
     <Link className="w-full block bg-white/70 text-violet-950 p-2 hover:bg-violet-300/95 active:bg-white overflow-hidden transition-all duration-300 ease-in-out" href={link}>
       <div className="flex items-center justify-between">
         <div className="flex-shrink-0 rounded-full w-fit">
