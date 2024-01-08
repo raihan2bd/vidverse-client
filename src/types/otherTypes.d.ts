@@ -12,3 +12,17 @@ interface NotificationType {
   type?: string;
   created_at: string;
 }
+
+declare module 'use-sound' {
+  export default function useSound(sound: any, options?: any): any;
+}
+
+declare module '*.wav' {
+  const value: string;
+  export default value;
+}
+
+declare module '*.mp3' {
+  const value: string;
+  export default value;
+}
