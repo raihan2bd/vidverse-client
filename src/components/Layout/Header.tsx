@@ -16,6 +16,8 @@ import { BsArrowLeftShort } from "react-icons/bs";
 import SearchForm from "../SearchForm/SearchForm";
 import Notifications from "../Notifications/Notifications";
 import { useSession } from "next-auth/react";
+import ToastMessage from "../UI/ToastMessage";
+import ToastNotification from "../Notifications/ToastNotification";
 
 interface PropsTypes {
   showSideBar: boolean;
@@ -119,6 +121,7 @@ if (!showSearchBar) {
        { authNavigationContent }
         </ul>
       </nav>
+      <ToastNotification token={session?.token} />
     </header>
   );
 };
