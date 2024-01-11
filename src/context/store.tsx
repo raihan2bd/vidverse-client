@@ -140,6 +140,9 @@ export const WebSocketProvider = ({ children }: { children: ReactNode }) => {
             setTotalNotification(data.data.total_new_notification)
             setNewNotification(data.data.notification)
             break;
+          case "a_notification_is_read":
+            setTotalNotification(data.data)
+            break;
           case "unauthorized":
             socketRef.current.close();
             signOut();
@@ -163,9 +166,7 @@ export const WebSocketProvider = ({ children }: { children: ReactNode }) => {
     socketRef.current.onclose = () => {
       setSocket(null);
       socketRef.current = null;
-      if (!totalNotification ) {
-        setTotalNotification(0)
-      }
+      setTotalNotification(0)
     }
 
     socketRef.current.onerror = (error) => {
@@ -174,12 +175,10 @@ export const WebSocketProvider = ({ children }: { children: ReactNode }) => {
       }
       setSocket(null);
       socketRef.current = null;
-      if (!totalNotification ) {
-        setTotalNotification(0)
-      }
+      setTotalNotification(0)
     };
 
-  }, [socketRef.current]);
+  }, [setTotalNotification, setNewNotification, socketRef.current]);
 
   useEffect(() => {
     if (uiState.success || uiState.error) {
@@ -188,7 +187,7 @@ export const WebSocketProvider = ({ children }: { children: ReactNode }) => {
       }, 3000);
       return () => clearTimeout(resetUI);
     }
-  }, [uiState.success, uiState.error]);
+  }, [uiState.success, uiState.error, resetUiState]);
 
   return (
     <WebSocketContext.Provider

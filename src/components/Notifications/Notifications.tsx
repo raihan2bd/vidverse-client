@@ -55,7 +55,7 @@ const Notifications = ({ token }: { token: string | undefined }) => {
   }
   , [setShowNotification, setNotifications, setPage, setHasNextPage]);
 
-  const dismissHandler = async (id: number) => {
+  const dismissHandler = useCallback(async (id: number) => {
     if (!token) {
       hideNotificationHandler();
       setError("You are not logged in");
@@ -90,7 +90,7 @@ const Notifications = ({ token }: { token: string | undefined }) => {
     } finally {
       hideNotificationHandler();
     }
-  };
+  }, [hideNotificationHandler, notifications, router, setError, token])
 
   const fetchNotifications = useCallback(
     async (
@@ -140,7 +140,7 @@ const Notifications = ({ token }: { token: string | undefined }) => {
         setPending(false);
       }
     },
-    [loading, setLoading, setError, router, token, setHasNextPage, setPage, setNotifications, notifications, page]
+    [setLoading, setError, router, token, setHasNextPage, setPage, setNotifications, notifications, page]
   );
 
   const notificationItems = useMemo(() => {
@@ -184,11 +184,11 @@ const Notifications = ({ token }: { token: string | undefined }) => {
       });
     }
     return (
-      <p className="text-gray-500 text-center item-center h-full my-auto">
+      <p className="text-white text-center my-auto">
         No Notifications Found
       </p>
     );
-  }, [notifications, loading]);
+  }, [notifications, loading, dismissHandler]);
 
   const notificationBadge = useMemo(() => {
     if (totalNotification !== null) {
@@ -212,7 +212,7 @@ const Notifications = ({ token }: { token: string | undefined }) => {
     return (
       <span className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></span>
     );
-  }, [totalNotification, showNotification]);
+  }, [totalNotification, showNotification, toggleNotificationHandler]);
 
   const pageContent = useMemo(() => {
     return (
@@ -226,7 +226,7 @@ const Notifications = ({ token }: { token: string | undefined }) => {
         {notificationBadge}
       </div>
     );
-  }, [notifications, showNotification, totalNotification, has_next_page, fetchNotifications, page]);
+  }, [ showNotification, has_next_page, fetchNotifications, notificationBadge, notificationItems]);
 
   useEffect(() => {
     if (showNotification && !notifications) {

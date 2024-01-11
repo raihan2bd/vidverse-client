@@ -1,5 +1,6 @@
-export default async (page: number, searchQuery: string = "", limit: number = 24) => {
-  const response = await fetch(`http://localhost:4000/api/v1/videos?search=${searchQuery}&page=${page}&limit=${limit}`, { cache: 'no-store' });
+const getAllVideos = async (page: number, searchQuery: string = "", limit: number = 24) => {
+  const API_URL = process.env.NEXT_PUBLIC_API_URL;
+  const response = await fetch(`${API_URL}/api/v1/videos?search=${searchQuery}&page=${page}&limit=${limit}`, { cache: 'no-store' });
   if(!response.ok) {
     if(response.status === 401) {
       // Logout the current user
@@ -13,3 +14,5 @@ export default async (page: number, searchQuery: string = "", limit: number = 24
   const result = await response.json();
   return result;
 };
+
+export default getAllVideos;
