@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useInView } from "react-intersection-observer";
 import VideoItem from "../Videos/VideoItem";
 
@@ -16,7 +16,7 @@ const LoadMoreChannelVideos = ({id, has_next_page}: {has_next_page: boolean, id:
 
   const { ref, inView } = useInView();
 
-  const onLoadMore = async () => {
+  const onLoadMore = useCallback(async () => {
     try {
 
       await new Promise((resolve) => setTimeout(resolve, 2000));
@@ -28,13 +28,13 @@ const LoadMoreChannelVideos = ({id, has_next_page}: {has_next_page: boolean, id:
     } catch(err: any) {
       setError(err.message || 'something went wrong');
     }
-  };
+  }, [page, id, setError]);
 
   useEffect(() => {
     if (inView && hasNextPage) {
       onLoadMore();
     }
-  }, [inView])
+  }, [inView, hasNextPage, onLoadMore])
 
   const videoContent = videos.map((video: VideoType) => {
     return <VideoItem key={video.id} video={video} />;
