@@ -100,7 +100,7 @@ if (!showSearchBar) {
         <AuthActionButtons session={null} />
       </li>
     );
-  }, [customSession]);
+  }, [customSession, session]);
 
   return (
     <header className="flex flex-row justify-between gap-2 p-4 md:px-6 bg-violet-900 text-white items-center fixed w-[100%] h-[5rem] z-50">

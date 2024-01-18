@@ -59,8 +59,8 @@ const UILayout = ({ children }: PropTypes) => {
     ? "block md:hidden fixed pt-[5rem] left-0 bottom-0 z-10 h-screen w-[100%] md:w-1/5 md:min-w-[280px] thin-scrollbar text-black"
     : "hidden md:block fixed pt-[5rem] left-0 bottom-0 z-10 h-screen w-[100%] md:w-[23%] thin-scrollbar text-black";
 
-  if (pathname === `/videos/${params.id}`) {
-    sidebarClasses = showSideBar
+    if (pathname === `/videos/${params.id}` || pathname === '/login' || pathname === '/signup' || pathname === '/contact-us') {
+      sidebarClasses = showSideBar
       ? "block fixed pt-[5rem] left-0 bottom-0 z-10 h-screen w-[100%] md:w-1/5 thin-scrollbar text-black md:min-w-[280px]"
       : "hidden";
 
