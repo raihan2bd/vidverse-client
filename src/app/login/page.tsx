@@ -1,5 +1,5 @@
 "use client";
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useSearchParams, useRouter } from "next/navigation";
 import Input from "@/components/UI/input";
@@ -9,6 +9,11 @@ import useInput from "@/hooks/useInput";
 import { validateInput } from "@/utils/validator";
 import { useSession } from "next-auth/react";
 import { useGlobalState } from "@/context/store";
+import AuthOverlay from "@/components/UI/AuthOverlay";
+import apple from '../../../public/images/apple-icon.svg'
+import google from '../../../public/images/google-icon.svg'
+import fb from '../../../public/images/fb-icon.svg'
+import Image from "next/image";
 
 const Login = () => {
   const { data: session } = useSession();
@@ -55,10 +60,17 @@ const Login = () => {
   useEffect(() => {
     if (session && session.user)
       callbackUrl ? router.push(callbackUrl as string) : router.push("/");
-  }, [session, callbackUrl]);
+  }, [session, callbackUrl, router]);
+
+  // check form validation
+  const isFormValid =
+    !emailError && !passwordError && isEmailTouched && isPasswordTouched
+      ? true
+      : false;
 
   const formSubmitHandler = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    event.stopPropagation();
     try {
       setLoading(true);
       setHasError(null);
@@ -88,76 +100,101 @@ const Login = () => {
     }
   };
 
-  // check form validation
-  const isFormValid =
-    !emailError && !passwordError && isEmailTouched && isPasswordTouched
-      ? true
-      : false;
+  const inputCls = useMemo(() => {
+    return "px-4 py-2 text-[#243D66] bg-transparent border-0 border-b-2 border-white mb-6 outline-none text-base placeholder:text-white/50 md:mb-4"
+  }, [])
+
+  
 
   return (
-    <section className="flex flex-col justify-center items-center p-6">
-      <form
-        className="flex flex-col border border-violet-300/90 p-4 md:p-6 min-h-[calc(100vh-7rem)] w-[600px] max-w-[100%] shadow-xl shadow-violet-300 rounded-xl overflow-y-auto"
-        onSubmit={formSubmitHandler}
-      >
-        <h2 className="text-center text-xl border-0 border-b-2 font-bold border-violet-900 p-2 text-violet-900 mb-3">
-          Login
-        </h2>
+    <section className="flex flex-col justify-center items-center mt-[-5rem]">
+      <AuthOverlay>
+        <div className="flex flex-col min-h-screen w-[767px] max-w-[100%] relative z-[1] my-4">
+        <h2 className="relative z-[1] text-white text-5xl font-semibold">Welcome!</h2>
+        <h4 className="relative z-[1] text-white text-md mt-2">Sign in to continue</h4>
 
-        <p className="text-red-500 p-4 my-3 text-center h-[20px]">{hasError}</p>
-
-        <Input
-          name="email"
-          type="email"
-          label="Email"
-          value={email}
-          inputError={isEmailTouched ? emailError : null}
-          onChange={emailChangeHandler}
-          onBlur={emailBlurHandler}
-          required
-          placeholder="Enter your email"
-        />
-        <Input
-          name="password"
-          type={showPass ? "text" : "password"}
-          label="Password"
-          value={password}
-          inputError={isPasswordTouched ? passwordError : null}
-          onChange={passwordChangeHandler}
-          onBlur={passwordBlurHandler}
-          required
-          placeholder="Enter your password"
-        />
-        <Input
-          wrapperCls="flex items-center gap-2 text-black/60 text-sm"
-          inputCls="w-fit"
-          name="show"
-          type="checkbox"
-          label="Show Password"
-          onChange={handleShowPass}
-        />
-
-        <Link
-          className="text-violet-900 block w-fit ms-auto my-4"
-          href="/forgot-pass"
+        <form
+          className="flex flex-col p-4 md:p-8 rounded-xl mt-4 bg-[#D9D9D9] bg-opacity-[30%]"
+          onSubmit={formSubmitHandler}
         >
-          Forgot password?
-        </Link>
 
-        <Button
-          disabled={!isFormValid || loading}
-          btnClass="block w-full ms-auto mt-2 py-3"
-          type="submit"
-        >
-          {loading ? "Loading..." : "Login"}
-        </Button>
-        <p className="text-center block mt-auto italic text-black/80 pt-2">
-          If you don&lsquo;t have an account. Register a new one!{" "}
-          <Link className="text-violet-950 underline p-1" href="/signup">
-            Signup
+           {hasError && <p className="text-red-500 p-4 my-4 text-center h-[20px]">
+            {hasError}
+          </p>}
+
+          <Input
+            name="email"
+            type="email"
+            value={email}
+            inputError={isEmailTouched ? emailError : null}
+            onChange={emailChangeHandler}
+            onBlur={emailBlurHandler}
+            required
+            placeholder="Enter your email"
+            inputCls={inputCls}
+          />
+          <Input
+            name="password"
+            type={showPass ? "text" : "password"}
+            value={password}
+            inputError={isPasswordTouched ? passwordError : null}
+            onChange={passwordChangeHandler}
+            onBlur={passwordBlurHandler}
+            required
+            placeholder="Enter your password"
+            inputCls={inputCls}
+          />
+          <Input
+            wrapperCls="flex items-center gap-2 w-fit ms-auto text-[#243D66] text-sm"
+            inputCls="w-fit"
+            name="show"
+            type="checkbox"
+            label="Show Password"
+            onChange={handleShowPass}
+          />
+
+
+          <Button
+            disabled={loading}
+            btnClass="mx-auto mt-2 py-2 text-2xl bg-[#243D66] w-fit rounded-[12px] shadow-lg uppercase font-semibold"
+            style={{padding: '0.5rem 2rem'}}
+            type="submit"
+          >
+            {loading ? "Loading..." : "Login"}
+          </Button>
+          <Link
+            className="text-[#243D66] block w-fit mx-auto my-4 text-sm"
+            href="/forgot-pass"
+          >
+            Forgot password?
           </Link>
-        </p>
-      </form>
+
+          <div className="flex flex-row gap-4 md:gap-10 items-center"><hr className="w-1/2" /><span className="text-[#243D66]">or</span><hr className="w-1/2" /></div>
+          <div className="text-[#243D66] flex flex-col items-center mt-2 gap-3 text-sm">
+            <p>Sign in with</p>
+            <div className="flex flex-row gap-6">
+              <button>
+              <Image src={google} alt="Google" width={30} height={30} />
+              </button>
+              <button>
+              <Image src={fb} alt="Google" width={30} height={30} />
+              </button>
+              <button>
+              <Image src={apple} alt="Google" width={30} height={30} />
+              </button>
+            </div>
+            <Link href="/contact-us">Need a help?</Link>
+          </div>
+
+        </form>
+          <p className="text-center block text-white pt-2 text-sm md:text-base">
+            If you don&lsquo;t have an account. Register a new one!{" "}
+            <Link className="text-[#243D66] underline p-1" href="/signup">
+              Signup
+            </Link>
+          </p>
+        </div>
+      </AuthOverlay>
     </section>
   );
 };
