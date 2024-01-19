@@ -75,7 +75,7 @@ const UILayout = ({ children }: PropTypes) => {
 
   return (
     <>
-      <Header onSetShowSideBar={setShowSideBar} showSideBar={showSideBar} />
+    {pathname !== '/login' ? pathname !== '/signup'?   <Header onSetShowSideBar={setShowSideBar} showSideBar={showSideBar} />: '' : ''}
       <main className="pt-20 flex gap-4 items-center">
         <Sidebar sidebarClasses={sidebarClasses} onHideSidebar={hideSideBarHandler} user_id={session?.user.id} user_role={session?.user.user_role} />
         <div className={mainContentCls}>
