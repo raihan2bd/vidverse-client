@@ -1,0 +1,44 @@
+.container {
+  width: 100%;
+  height: 100%;
+  background: #6e61ca;
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  padding: 1rem;
+  overflow: hidden;
+}
+
+.container::before {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  content: '';
+  width: 100%;
+  height: 70%;
+  border-radius: 0% 0% 50% 50%;
+  background: #c68df9;
+  z-index: 1;
+}
+
+@media(min-width: 767px) {
+  .container {
+    overflow: hidden;
+    padding: 1rem;
+    overflow: hidden;
+  }
+  
+  .container::before {
+    position: absolute;
+    top: -100%;
+    height: 180%;
+    border-radius: 0% 0% 70% 70%;
+    background: #c68df9;
+    z-index: 1;
+  }
+}
