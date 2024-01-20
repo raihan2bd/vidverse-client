@@ -17,7 +17,7 @@ const config: Config = {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
         'gradient-conic':
           'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
-          'gradient-btn': 'linear-gradient(180deg, rgba(109, 96, 202, 0.55) 0%, rgba(122, 106, 235, 0.69) 30.5%, rgba(139, 130, 203, 0.00) 45.5%, rgba(109, 96, 202, 0.55) 63%, rgba(139, 130, 203, 0.00) 100%, #8E24AA 100%)',
+          'gradient-btn': 'linear-gradient(180deg, #CDC9EA 0%, rgba(122, 106, 235, 0.69) 30.5%, rgba(109, 96, 202, 0.55) 45.5%, rgba(95, 80, 198, 0.37) 63%, rgba(139, 130, 203, 0.00) 100%)',
       },
       colors: {
         'custom-blue': {
