@@ -125,7 +125,7 @@ const Signup = () => {
 
   return (
     <section className="flex flex-col justify-center items-center mt-[-5rem]">
-      <AuthOverlay>
+      <AuthOverlay isSignup={true}>
       <h2 className="relative z-[1] text-white text-5xl font-bold font-poppins">
             Hi!
           </h2>
