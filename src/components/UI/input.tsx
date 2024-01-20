@@ -14,8 +14,8 @@ const Input: React.FC<InputProps> = forwardRef(
   (
     {
       name,
-      wrapperCls = 'flex flex-col gap-2 w-full text-sm text-black/80',
-      inputCls = 'w-full px-4 py-2 bg-white/10 text-black/80 text-base hover:px-6 transition-all rounded-sm border border-violet-300 mb-2 rounded-sm text-sm',
+      wrapperCls = 'flex flex-col gap-2 w-full text-sm text-[#243D66]',
+      inputCls = 'w-full px-4 py-2 bg-white/10 text-[#243D66] text-base hover:px-6 transition-all rounded-sm border border-violet-300 mb-2 rounded-sm text-sm',
       label,
       inputError,
       inputRef,
@@ -32,6 +32,7 @@ const Input: React.FC<InputProps> = forwardRef(
             {label}: {inputError && <span className="text-red-500">{inputError}</span>}
           </label>
         )}
+        {inputError && !label && <p className="text-red-500 text-sm">{  inputError }</p>}
         <input
           name={name}
           className={inputClass}
@@ -42,6 +43,8 @@ const Input: React.FC<InputProps> = forwardRef(
     );
   }
 );
+
+Input.displayName = 'Input'
 
 export default Input;
 

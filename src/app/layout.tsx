@@ -1,11 +1,21 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Lato, Poppins } from "next/font/google";
 import "./globals.css";
 import UILayout from "@/components/Layout/UILayout";
 import Provider from "@/components/Provider/Provider";
 import { WebSocketProvider } from "@/context/store";
 
-const inter = Inter({ subsets: ["latin"] });
+const poppins = Poppins({
+  subsets: ["latin"],
+  weight: ['300', '400', '500', '600', '700', '800', '900'],
+  variable: "--font-poppins",
+});
+
+const lato = Lato({
+  subsets: ["latin"],
+  weight: ['100', '300', '400', '700', '900'],
+  variable: "--font-lato",
+});
 
 export const metadata: Metadata = {
   title: "Vidverse | Your favorite streaming site.",
@@ -20,7 +30,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body className={lato.className}>
         <Provider>
           <WebSocketProvider>
             <UILayout>{children}</UILayout>

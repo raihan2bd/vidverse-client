@@ -9,13 +9,14 @@ import { useGlobalState } from "@/context/store";
 import Spinner from "../UI/Spinner";
 import ToastMessage from "../UI/ToastMessage";
 import { useSession } from "next-auth/react";
+import path from "path";
 
 interface PropTypes {
   children: ReactNode;
 }
 
 const UILayout = ({ children }: PropTypes) => {
-  const { status, data:session } = useSession();
+  const { status, data: session } = useSession();
 
   const [showSideBar, setShowSideBar] = useState(false);
   const pathname = usePathname();
@@ -33,6 +34,14 @@ const UILayout = ({ children }: PropTypes) => {
   const hideSideBarHandler = () => {
     setShowSideBar(false);
   };
+
+  const headerContent = useMemo(() => {
+    if (pathname === "/signup" || pathname === "/login" || pathname === "/auth")
+      return null;
+    return (
+      <Header onSetShowSideBar={setShowSideBar} showSideBar={showSideBar} />
+    );
+  }, [pathname, showSideBar, setShowSideBar]);
 
   const loadingSpinner = useMemo(() => {
     if (loading) {
@@ -59,8 +68,14 @@ const UILayout = ({ children }: PropTypes) => {
     ? "block md:hidden fixed pt-[5rem] left-0 bottom-0 z-10 h-screen w-[100%] md:w-1/5 md:min-w-[280px] thin-scrollbar text-black"
     : "hidden md:block fixed pt-[5rem] left-0 bottom-0 z-10 h-screen w-[100%] md:w-[23%] thin-scrollbar text-black";
 
-    if (pathname === `/videos/${params.id}` || pathname === '/login' || pathname === '/signup' || pathname === '/contact-us') {
-      sidebarClasses = showSideBar
+  if (
+    pathname === `/videos/${params.id}` ||
+    pathname === "/login" ||
+    pathname === "/signup" ||
+    pathname === "/auth" ||
+    pathname === "/contact-us"
+  ) {
+    sidebarClasses = showSideBar
       ? "block fixed pt-[5rem] left-0 bottom-0 z-10 h-screen w-[100%] md:w-1/5 thin-scrollbar text-black md:min-w-[280px]"
       : "hidden";
 
@@ -68,16 +83,23 @@ const UILayout = ({ children }: PropTypes) => {
   }
 
   if (status === "loading") {
-    return <div className="flex justify-center items-center w-full h-screen">
-      <Spinner />
-    </div>
+    return (
+      <div className="flex justify-center items-center w-full h-screen">
+        <Spinner />
+      </div>
+    );
   }
 
   return (
     <>
-      <Header onSetShowSideBar={setShowSideBar} showSideBar={showSideBar} />
+      {headerContent}
       <main className="pt-20 flex gap-4 items-center">
-        <Sidebar sidebarClasses={sidebarClasses} onHideSidebar={hideSideBarHandler} user_id={session?.user.id} user_role={session?.user.user_role} />
+        <Sidebar
+          sidebarClasses={sidebarClasses}
+          onHideSidebar={hideSideBarHandler}
+          user_id={session?.user.id}
+          user_role={session?.user.user_role}
+        />
         <div className={mainContentCls}>
           <ToastMessage
             error={error}
