@@ -103,7 +103,7 @@ const Login = () => {
   };
 
   const inputCls = useMemo(() => {
-    return "px-4 py-2 text-[#243D66] bg-transparent border-0 border-b-2 border-white mb-6 outline-none text-base placeholder:text-white/50 md:mb-4";
+    return "px-4 py-2 text-custom-blue-400 bg-transparent border-0 border-b-2 border-white mb-6 outline-none text-base placeholder:text-white/50 md:mb-4";
   }, []);
 
   return (
@@ -150,7 +150,7 @@ const Login = () => {
               inputCls={inputCls}
             />
             <Input
-              wrapperCls="flex items-center gap-2 w-fit ms-auto text-[#243D66] text-sm"
+              wrapperCls="flex items-center gap-2 w-fit ms-auto text-custom-blue-400 text-sm"
               inputCls="w-fit"
               name="show"
               type="checkbox"
@@ -160,14 +160,14 @@ const Login = () => {
 
             <Button
               disabled={loading}
-              btnClass="mx-auto mt-2 py-2 text-2xl bg-[#243D66] w-fit rounded-[12px] shadow-lg uppercase font-semibold"
+              btnClass="mx-auto mt-2 py-2 text-2xl bg-custom-blue-400 w-fit rounded-[12px] shadow-lg uppercase font-semibold"
               style={{ padding: "0.5rem 2rem" }}
               type="submit"
             >
               {loading ? "Loading..." : "Login"}
             </Button>
             <Link
-              className="text-[#243D66] block w-fit mx-auto my-4 text-sm"
+              className="text-custom-blue-400 block w-fit mx-auto my-4 text-sm"
               href="/forgot-pass"
             >
               Forgot password?
@@ -175,10 +175,10 @@ const Login = () => {
 
             <div className="flex flex-row gap-4 md:gap-10 items-center">
               <hr className="w-1/2" />
-              <span className="text-[#243D66]">or</span>
+              <span className="text-custom-blue-400">or</span>
               <hr className="w-1/2" />
             </div>
-            <div className="text-[#243D66] flex flex-col items-center mt-2 gap-3 text-sm">
+            <div className="text-custom-blue-400 flex flex-col items-center mt-2 gap-3 text-sm">
               <p>Sign in with</p>
               <div className="flex flex-row gap-6">
                 <button>
@@ -196,7 +196,7 @@ const Login = () => {
           </form>
           <p className="text-center block text-white pt-2 text-sm md:text-base">
             If you don&lsquo;t have an account. Register a new one!{" "}
-            <Link className="text-[#243D66] underline p-1" href="/signup">
+            <Link className="text-custom-blue-400 underline p-1" href="/signup">
               Signup
             </Link>
           </p>
