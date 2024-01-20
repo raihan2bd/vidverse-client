@@ -78,10 +78,7 @@ const Signup = () => {
 
   // check form validation
   const isFormValid =
-    !nameError &&
-    !emailError &&
-    !passwordError &&
-    !conformPasswordError
+    !nameError && !emailError && !passwordError && !conformPasswordError
       ? true
       : false;
 
@@ -93,11 +90,11 @@ const Signup = () => {
     event.preventDefault();
     event.stopPropagation();
     if (!isFormValid) {
-      nameBlurHandler()
-      emailBlurHandler()
-      passwordBlurHandler()
-      conformPasswordBlurHandler()
-      return
+      nameBlurHandler();
+      emailBlurHandler();
+      passwordBlurHandler();
+      conformPasswordBlurHandler();
+      return;
     }
     setLoading(true);
     if (!isFormValid) return;
@@ -126,12 +123,12 @@ const Signup = () => {
   return (
     <section className="flex flex-col justify-center items-center mt-[-5rem]">
       <AuthOverlay isSignup={true}>
-      <h2 className="relative z-[1] text-white text-5xl font-bold font-poppins">
-            Hi!
-          </h2>
-          <h4 className="relative z-[1] text-white text-md mt-2">
-            Create a new account
-          </h4>
+        <h2 className="relative z-[1] text-white text-5xl font-bold font-poppins">
+          Hi!
+        </h2>
+        <h4 className="relative z-[1] text-white text-md mt-2">
+          Create a new account
+        </h4>
         <form
           className="flex flex-col p-4 md:p-8 rounded-xl mt-4 bg-[#D9D9D9] bg-opacity-[35%]"
           onSubmit={onSubmit}
@@ -171,15 +168,6 @@ const Signup = () => {
           />
 
           <Input
-            wrapperCls="flex items-center gap-2 w-fit ms-auto text-custom-blue-400 text-sm"
-            inputCls="w-fit"
-            name="show"
-            type="checkbox"
-            label="Show Password"
-            onChange={handleShowPass}
-          />
-
-          <Input
             name="conform_password"
             type={showPass ? "text" : "password"}
             value={conformPassword}
@@ -189,6 +177,15 @@ const Signup = () => {
             required
             placeholder="Enter the conformation password"
             inputCls={inputCls}
+          />
+
+          <Input
+            wrapperCls="flex items-center gap-2 w-fit ms-auto text-custom-blue-400 text-sm"
+            inputCls="w-fit"
+            name="show"
+            type="checkbox"
+            label="Show Password"
+            onChange={handleShowPass}
           />
 
           <Button
