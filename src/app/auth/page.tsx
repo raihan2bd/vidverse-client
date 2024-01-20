@@ -4,7 +4,7 @@ import Link from "next/link";
 
 const AuthPage = () => {
   return (
-    <section className="bg-custom-violet-300 grid grid-cols-2 min-h-screen mt-[-5rem] p-[6%] items-center">
+    <section className="bg-custom-violet-300 grid grid-cols-2 min-h-screen mt-[-5rem] p-[6%] md:p-[8%] items-center">
       <div className="col-span-full md:col-span-1 flex flex-col gap-2">
         <h2 className="text-white text-5xl font-semibold text-left">
           Hello!
