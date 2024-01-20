@@ -200,7 +200,7 @@ const Signup = () => {
             {loading ? "Loading..." : "Signup"}
           </Button>
 
-          <div className="flex flex-row gap-4 md:gap-10 items-center">
+          <div className="flex flex-row gap-4 md:gap-10 items-center mt-4">
             <hr className="w-1/2" />
             <span className="text-custom-blue-400">or</span>
             <hr className="w-1/2" />

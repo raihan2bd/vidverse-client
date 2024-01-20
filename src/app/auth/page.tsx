@@ -9,13 +9,13 @@ const AuthPage = () => {
         <h2 className="text-white text-5xl font-semibold text-left">
           Hello!
         </h2>
-        <p className="text-white text-md mt-2">
+        <p className="text-white text-lg mt-2">
           Best place were <br /> You can kill your time.
         </p>
         <div className="mt-8 flex flex-col gap-8 w-fit mx-auto md:mx-0">
-          <Link className="block w-[200px] max-w-[100%] bg-gradient-btn rounded-20 px-5 py-3 shadow-custom-btn text-xl font-bold text-center text-white hover:text-custom-blue-400" href="/login">SIGN IN</Link>
-          <Link href="/signup" className="block w-[200px] max-w-[100%] bg-gradient-btn rounded-20 px-5 py-3 shadow-custom-btn text-xl font-bold text-center text-white hover:text-custom-blue-400">SIGN UP</Link>
-        <Link href="/" className="text-white text-center mt-[-1rem]">Continue as a quest</Link>
+          <Link className="block w-[300px] max-w-[100%] bg-gradient-btn rounded-20 px-5 py-3 shadow-custom-btn text-xl font-bold text-center text-white hover:text-custom-blue-400" href="/login">SIGN IN</Link>
+          <Link href="/signup" className="block w-[300px] max-w-[100%] bg-gradient-btn rounded-20 px-5 py-3 shadow-custom-btn text-xl font-bold text-center text-white hover:text-custom-blue-400">SIGN UP</Link>
+        <Link href="/" className="text-custom-purple-100 text-center mt-[-1rem]">Continue as a quest</Link>
         </div>
       </div>
       <div className="hidden first-letter:md:col-span-1 md:block">
