@@ -109,7 +109,6 @@ const Login = () => {
   return (
     <section className="flex flex-col justify-center items-center mt-[-5rem]">
       <AuthOverlay>
-        <div className="flex flex-col min-h-screen w-[767px] max-w-[100%] relative z-[1] my-4">
           <h2 className="relative z-[1] text-white text-5xl font-semibold">
             Welcome!
           </h2>
@@ -118,7 +117,7 @@ const Login = () => {
           </h4>
 
           <form
-            className="flex flex-col p-4 md:p-8 rounded-xl mt-4 bg-[#D9D9D9] bg-opacity-[40%]"
+            className="flex flex-col p-4 md:p-8 rounded-xl mt-4 bg-[#D9D9D9] bg-opacity-[35%]"
             onSubmit={formSubmitHandler}
           >
             {hasError && (
@@ -200,7 +199,6 @@ const Login = () => {
               Signup
             </Link>
           </p>
-        </div>
       </AuthOverlay>
     </section>
   );
