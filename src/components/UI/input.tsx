@@ -32,13 +32,13 @@ const Input: React.FC<InputProps> = forwardRef(
             {label}: {inputError && <span className="text-red-500">{inputError}</span>}
           </label>
         )}
+        {inputError && !label && <p className="text-red-500 text-sm">{  inputError }</p>}
         <input
           name={name}
           className={inputClass}
           ref={inputRef || ref as LegacyRef<HTMLInputElement>}
           {...restProps}
         />
-        {inputError && <p className="text-red-500 text-sm">{name + inputError}</p>}
       </div>
     );
   }
