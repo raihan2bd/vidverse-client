@@ -38,10 +38,13 @@ const Input: React.FC<InputProps> = forwardRef(
           ref={inputRef || ref as LegacyRef<HTMLInputElement>}
           {...restProps}
         />
+        {inputError && <p className="text-red-500 text-sm">{name + inputError}</p>}
       </div>
     );
   }
 );
+
+Input.displayName = 'Input'
 
 export default Input;
 
