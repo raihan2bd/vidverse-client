@@ -111,31 +111,31 @@ const ChannelDetails = ({
           className="w-full h-full object-cover rounded-xl"
           src={cover}
           alt={title}
-          width={"100%"}
-          height={"200px"}
+          width={'100%'}
+          height={'200px'}
         />
       </div>
       <div className="flex flex-col justify-center items-stretch sm:flex-row sm:items-center gap-3">
         <div className="flex flex-row gap-3 items-center">
-        <div className="flex-shrink-0 w-[72px] h-[72px] bg-black/10 rounded-full overflow-hidden relative">
-          <Image
-            className="rounded-full p-[2px] border border-violet-950"
-            src={logo}
-            alt={title}
-            fill={true}
-            sizes="72px"
-          />
-        </div>
-        <div className="w-fit">
-          <h1 className="text-xl mb-1 font-bold text-violet-800">{title}</h1>
-          <span className="block text-xs font-normal text-gray-500 text-center mb-1">
-            {totalSubscriber} subscribers
-          </span>
-          <Subscribe
-            channel_id={id}
-            is_subscribed={is_subscribed}
-            onHandleSubscribed={handleSubscribe}
-          />
+          <div className="flex-shrink-0 w-[72px] h-[72px] bg-black/10 rounded-full overflow-hidden relative">
+            <Image
+              className="rounded-full p-[2px] border border-violet-950"
+              src={logo}
+              alt={title}
+              fill={true}
+              sizes="72px"
+            />
+          </div>
+          <div className="w-fit">
+            <h1 className="text-xl mb-1 font-bold text-violet-800">{title}</h1>
+            <span className="block text-xs font-normal text-gray-500 text-center mb-1">
+              {totalSubscriber} subscribers
+            </span>
+            <Subscribe
+              channel_id={id}
+              is_subscribed={is_subscribed}
+              onHandleSubscribed={handleSubscribe}
+            />
           </div>
         </div>
         <div className="flex flex-row gap-2 justify-between rounded-3xl bg-slate-300 w-full sm:w-[250px] max-w-[100%] ms-auto  text-black">
@@ -159,7 +159,7 @@ const ChannelDetails = ({
       </div>
       {authorBtn}
       {!isAbout ? (
-        <ul className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5 gap-4 mt-4 min-h-[500px]">
+        <ul className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5 gap-4 mt-4">
           {videoContent}
           <LoadMoreChannelVideos has_next_page={hasNextPage} id={id} />
         </ul>

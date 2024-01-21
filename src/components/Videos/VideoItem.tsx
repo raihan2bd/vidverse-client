@@ -49,8 +49,8 @@ const VideoItem = ({ video }: VideoItemProps) => {
         </Link>
         <div className="flex flex-col">
           <div className="flex font-bold justify-between">
-            <span className="">{`${video.views}K views`}</span>
             <span>{video.channel_title}</span>
+            <span className="">{`${video.views}K views`}</span>
           </div>
           <div className="text-xs text-custom-blue-500">
             <p>
