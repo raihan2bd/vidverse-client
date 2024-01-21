@@ -6,6 +6,7 @@ interface VideoType {
   channel_id: number;
   channel_title: string;
   channel_logo: string;
+  created_at: string;
 }
 
 interface CommentType {
