@@ -68,10 +68,10 @@ const Login = () => {
   const formSubmitHandler = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     event.stopPropagation();
-    if (isEmailTouched) {
-      emailBlurHandler()
-      emailBlurHandler()
-      return
+    if (!isFormValid) {
+      emailBlurHandler();
+      emailBlurHandler();
+      return;
     }
     try {
       setLoading(true);
