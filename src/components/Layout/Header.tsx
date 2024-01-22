@@ -37,8 +37,8 @@ const Header = ({ onSetShowSideBar, showSideBar }: PropsTypes) => {
     onSetShowSideBar((prevState) => !prevState);
 
   const hamburgerMenuClass = showSideBar
-    ? "text-2xl text-red-400 font-black"
-    : "text-2xl text-custom-blue-500 font-black";
+    ? "text-2xl text-red-400 font-black hidden md:block"
+    : "text-2xl text-custom-blue-500 font-black hidden md:block";
 
   // Search bar
 let mobileSearchBarContent;
@@ -48,9 +48,9 @@ if (!showSearchBar) {
     <div className="flex sm:hidden gap-2 items-center ms-auto">
       <button
         onClick={showSearchBarHandler}
-        className="p-2 bg-custom-violet-700 rounded-lg h-full transform hover:translate-y-0 hover:translate-x-1"
+        className="rounded-full h-full transform hover:translate-y-0 hover:translate-x-1"
       >
-        <span className="text-2xl">
+        <span className="text-3xl">
           <BiSearch />
         </span>
       </button>
