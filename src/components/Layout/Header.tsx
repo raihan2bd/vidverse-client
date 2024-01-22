@@ -38,7 +38,7 @@ const Header = ({ onSetShowSideBar, showSideBar }: PropsTypes) => {
 
   const hamburgerMenuClass = showSideBar
     ? "text-2xl text-red-400 font-black"
-    : "text-2xl text-white font-black";
+    : "text-2xl text-custom-blue-500 font-black";
 
   // Search bar
 let mobileSearchBarContent;
@@ -48,7 +48,7 @@ if (!showSearchBar) {
     <div className="flex sm:hidden gap-2 items-center ms-auto">
       <button
         onClick={showSearchBarHandler}
-        className="p-2 bg-violet-600 rounded-lg h-full transform hover:translate-y-0 hover:translate-x-1"
+        className="p-2 bg-custom-violet-700 rounded-lg h-full transform hover:translate-y-0 hover:translate-x-1"
       >
         <span className="text-2xl">
           <BiSearch />
@@ -58,7 +58,7 @@ if (!showSearchBar) {
   );
 } else {
   mobileSearchBarContent = (
-    <div className="left-0 px-6 fixed z-50 w-[100%] h-[5rem] bg-violet-900 flex sm:hidden gap-2 items-center ms-auto justify-between">
+    <div className="left-0 px-6 fixed z-50 w-[100%] h-[5rem] bg-custom-violet-500 flex sm:hidden gap-2 items-center ms-auto justify-between shadow-lg">
       <button
         onClick={hideSearchBarHandler}
         className="h-fit p-2 bg-red-300 rounded-lg transform hover:translate-y-0 hover:translate-x-1"
@@ -103,13 +103,13 @@ if (!showSearchBar) {
   }, [customSession, session]);
 
   return (
-    <header className="flex flex-row justify-between gap-2 p-4 md:px-6 bg-violet-900 text-white items-center fixed w-[100%] h-[5rem] z-50">
+    <header className="flex flex-row justify-between gap-2 p-4 md:px-6 bg-custom-violet-500 text-white items-center fixed w-[100%] h-[5rem] z-50">
       <div className="flex gap-2 items-center">
         <span className={hamburgerMenuClass} onClick={toggleSidebarHandler}>
           <BiMenu />
         </span>
-        <Link href="/" className="text-2xl text-yellow-400 font-black">
-          Vidverse
+        <Link href="/" className="text-2xl text-white font-bold border-2 border-white p-[2px] flex gap-[3px]">
+          <span className="bg-white text-custom-violet-500 p-[2px] font-poppins">VID</span><span className="p-[2px]">VERSE</span>
         </Link>
       </div>
       {mobileSearchBarContent}
@@ -117,7 +117,7 @@ if (!showSearchBar) {
         <SearchForm onHideSearchBar={hideSearchBarHandler} />
       </div>
       <nav>
-        <ul className="flex flex-row gap-2 justify-center items-center">
+        <ul className="flex flex-row gap-1 justify-center items-center">
        { authNavigationContent }
         </ul>
       </nav>
