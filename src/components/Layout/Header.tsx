@@ -37,8 +37,8 @@ const Header = ({ onSetShowSideBar, showSideBar }: PropsTypes) => {
     onSetShowSideBar((prevState) => !prevState);
 
   const hamburgerMenuClass = showSideBar
-    ? "text-2xl text-red-400 font-black hidden md:block"
-    : "text-2xl text-custom-blue-500 font-black hidden md:block";
+    ? "text-3xl text-red-400 font-black hidden md:block"
+    : "text-3xl text-custom-blue-500 font-black hidden md:block";
 
   // Search bar
   let mobileSearchBarContent;
@@ -112,7 +112,7 @@ const Header = ({ onSetShowSideBar, showSideBar }: PropsTypes) => {
   }, [customSession, session]);
 
   return (
-    <header className="flex flex-row justify-between gap-2 p-4 md:px-6 bg-custom-violet-500 text-white items-center fixed w-[100%] h-[5rem] z-50">
+    <header className="flex flex-row justify-between gap-2 p-4 md:px-4 bg-custom-violet-500 text-white items-center fixed w-[100%] h-[5rem] z-50">
       <div className="flex gap-2 items-center">
         <span className={hamburgerMenuClass} onClick={toggleSidebarHandler}>
           <BiMenu />
