@@ -85,7 +85,7 @@ const Header = ({ onSetShowSideBar, showSideBar }: PropsTypes) => {
       return (
         <>
           {((session?.user.user_role === "admin") || (session?.user.user_role === "author")) && (
-              <li>
+              <li className="hidden md:block">
                 <Link
                   className="ms-1 rounded-full block text-2xl text-white hover:text-orange-300"
                   href="/dashboard/upload-video"
