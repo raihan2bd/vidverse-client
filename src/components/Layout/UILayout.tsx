@@ -9,7 +9,7 @@ import { useGlobalState } from "@/context/store";
 import Spinner from "../UI/Spinner";
 import ToastMessage from "../UI/ToastMessage";
 import { useSession } from "next-auth/react";
-import path from "path";
+import MobileTab from "./MobileTab";
 
 interface PropTypes {
   children: ReactNode;
@@ -109,6 +109,7 @@ const UILayout = ({ children }: PropTypes) => {
           {loadingSpinner}
           {children}
         </div>
+        <MobileTab onSetShowSideBar={setShowSideBar} showSideBar={showSideBar} />
       </main>
     </>
   );

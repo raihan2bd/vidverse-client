@@ -100,8 +100,8 @@ const AuthActionButtons = ({session}: PropsTypes) => {
             alt={session.user_name}
             width={32}
             height={32}
-            className={`rounded-full p-1 border border-white first-letter:${
-              authModal ? " bg-orange-400" : " bg-violet-400"
+            className={`rounded-full p-1 first-letter:${
+              authModal ? " bg-orange-400" : " bg-custom-violet-100 shadow-md"
             }`}
           />
         </Button>
@@ -112,17 +112,11 @@ const AuthActionButtons = ({session}: PropsTypes) => {
   return (
     <div className="flex gap-3 items-center">
       <Link
-          className="rounded-full block text-3xl bg-white text-violet-600 border border-white hover:text-orange-300"
-          href="/login"
+          className="ms-1 rounded-full block text-3xl bg-custom-violet-700 text-white hover:text-orange-300"
+          href="/auth"
         >
           <FaUserCircle />
         </Link>
-    <Link
-      href={"/signup"}
-      className="text-white bg-orange-400 hover:bg-orange-700 px-3 py-2 rounded-3xl text-base"
-    >
-      Signup
-    </Link>
     </div>
   );
 };
