@@ -46,14 +46,14 @@ const VideoItem = ({ video }: VideoItemProps) => {
             />
           </div>{' '}
         </Link>
-        <div className="flex flex-col">
-          <div className="flex font-bold justify-between">
+        <div className="flex flex-col w-full justify-center">
+          <div className="flex font-bold justify-between w-full items-center">
             <span>{video.channel_title}</span>
-            <span className="">{`${convertViews(video.views)} views`}</span>
+            <span className="ms-auto">{`${convertViews(video.views)} views`}</span>
           </div>
           <div className="text-xs text-custom-blue-500">
-            <p>
-              Container house <span> ~ {convertTime(video.created_at)}</span>
+            <p className=''>
+            {convertTime(video.created_at)}
             </p>
           </div>
         </div>
