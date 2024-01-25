@@ -74,7 +74,7 @@ const Sidebar = ({
         </>
       );
     }
-  }, [user_id]);
+  }, [user_id, onHideSidebar]);
 
   const roleBasedLinks = useMemo(() => {
     if (user_role === "admin" || (user_role === "author" && user_id)) {
@@ -120,7 +120,7 @@ const Sidebar = ({
         </>
       );
     }
-  }, [user_role, user_id]);
+  }, [user_role, user_id, onHideSidebar]);
 
   return (
     <aside
