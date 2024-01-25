@@ -29,7 +29,7 @@ const Sidebar = ({
   const year = new Date().getFullYear().toString();
 
   const navLinksCls =
-    "flex gap-2 px-4 py-3 font-bold bg-white/20 md:bg-black/10 items-center hover:text-orange-700 hover:bg-white/10 md:hover:bg-black/20 hover:ps-8 transition-all duration-200 ease-in-out active:bg-white/10 md:active:bg-black/20";
+    "flex gap-2 px-4 py-3 font-bold items-center hover:text-orange-700 hover:bg-white/10 md:hover:bg-black/20 hover:ps-8 transition-all duration-200 ease-in-out active:bg-white/10 md:active:bg-black/20";
 
   const authLinksCls =
     "w-full flex gap-2 px-4 py-3 font-bold bg-slate-800 text-orange-300 items-center hover:text-orange-700 hover:bg-white/10 md:hover:bg-black/20 hover:ps-8 transition-all duration-200 ease-in-out active:bg-white/10 md:active:bg-black/20";
@@ -133,8 +133,8 @@ const Sidebar = ({
         <MdCancel />
       </span>
 
-      <nav className="pt-20 md:pt-4 h-full w-[80%] md:w-full max-w-[100%] bg-white/60 absolute z-[2] overflow-y-auto">
-        <ul className="list-none flex flex-col gap-[3px] text-violet-950">
+      <nav className="pt-20 md:pt-4 h-full w-[80%] md:w-full max-w-[100%] bg-custom-violet-500/60 absolute z-[2] overflow-y-auto">
+        <ul className="list-none flex flex-col gap-[3px] text-white">
           <li onClick={onHideSidebar}>
             <Link href="/" className={navLinksCls}>
               <span>
@@ -171,7 +171,7 @@ const Sidebar = ({
           {authBtns}
         </ul>
       </nav>
-      <footer className="bg-white/70 flex justify-center flex-wrap items-center text-black text-center fixed z-[2] bottom-0  h-[3rem]  w-[80%] md:w-full max-w-full  md:bg-black/10 overflow-hidden text-sm">
+      <footer className="bg-custom-violet-200 flex justify-center flex-wrap items-center text-black text-center fixed z-[2] bottom-0  h-[3rem]  w-[80%] md:w-full max-w-full overflow-hidden text-sm">
         Copyright &copy; {String(year)} Vidverse&#174;. All rights reserved.
       </footer>
     </aside>
