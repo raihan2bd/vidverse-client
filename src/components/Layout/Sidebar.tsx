@@ -124,7 +124,7 @@ const Sidebar = ({
 
   return (
     <aside
-      className={`${sidebarClasses} bg-black/70 md:bg-white backdrop-blur-md no-scrollbar overflow-hidden`}
+      className={`${sidebarClasses} bg-custom-violet-500 backdrop-blur-md no-scrollbar overflow-hidden`}
     >
       <span
         className="sm:hidden absolute text-xl z-[4] right-[1.5rem] bg-red-500 text-white p-1 rounded-sm top-[10rem] cursor-pointer"
