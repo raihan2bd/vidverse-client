@@ -136,7 +136,7 @@ const Sidebar = ({
         <MdCancel />
       </span>
 
-      <nav className="pt-20 md:pt-4 h-full w-[80%] md:w-full max-w-[100%] bg-custom-violet-500/60 absolute z-[2] overflow-y-auto">
+      <nav className="pt-20 md:pt-2 h-full w-[80%] md:w-full max-w-[100%] bg-custom-violet-500/60 absolute z-[2] overflow-y-auto">
         <ul className="list-none flex flex-col gap-[2px] text-white p-4">
           <li onClick={onHideSidebar}>
             <Link href="/" className={navLinksCls}>
@@ -162,7 +162,7 @@ const Sidebar = ({
               Videos
             </Link>
           </li>
-          <div className="p-4"></div>
+          <div className="p-3"></div>
           {roleBasedLinks}
           <li onClick={onHideSidebar}>
             <Link href="/contact-us" className={navLinksCls}>
@@ -183,7 +183,7 @@ const Sidebar = ({
           {authBtns}
         </ul>
       </nav>
-      <footer className="bg-custom-violet-200 flex justify-center flex-wrap items-center text-black text-center fixed z-[2] bottom-0  h-[3rem]  w-[80%] md:w-full max-w-full overflow-hidden text-sm">
+      <footer className="fixed z-[2] bottom-0  h-[3.2rem]  w-[80%] md:w-full max-w-full overflow-hidden text-sm text-white border-0 border-t p-2 text-center">
         Copyright &copy; {String(year)} Vidverse&#174;. All rights reserved.
       </footer>
     </aside>
