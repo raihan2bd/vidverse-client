@@ -13,6 +13,9 @@ import { IoMdMail } from "react-icons/io";
 import { useMemo } from "react";
 import { signOut } from "next-auth/react";
 
+import shortsIcon from '../../../public/images/shorts-icon.svg'
+import Image from "next/image";
+
 interface PropTypes {
   sidebarClasses: string;
   onHideSidebar: () => void;
@@ -29,7 +32,7 @@ const Sidebar = ({
   const year = new Date().getFullYear().toString();
 
   const navLinksCls =
-    "flex gap-2 px-4 py-3 font-bold items-center hover:bg-custom-violet-300 hover:ps-8 transition-all duration-200 ease-in-out active:bg-white/10 md:active:bg-black/20 rounded-lg";
+    "flex gap-2 px-4 py-2 font-bold items-center hover:bg-custom-violet-300 hover:ps-8 transition-all duration-200 ease-in-out active:bg-white/10 md:active:bg-black/20 rounded-lg";
 
   const authLinksCls =
     "w-full flex gap-2 px-4 py-3 font-bold bg-slate-800 text-orange-300 items-center hover:text-orange-700 hover:bg-white/10 md:hover:bg-black/20 hover:ps-8 transition-all duration-200 ease-in-out active:bg-white/10 md:active:bg-black/20";
@@ -134,13 +137,21 @@ const Sidebar = ({
       </span>
 
       <nav className="pt-20 md:pt-4 h-full w-[80%] md:w-full max-w-[100%] bg-custom-violet-500/60 absolute z-[2] overflow-y-auto">
-        <ul className="list-none flex flex-col gap-[3px] text-white p-4">
+        <ul className="list-none flex flex-col gap-[2px] text-white p-4">
           <li onClick={onHideSidebar}>
             <Link href="/" className={navLinksCls}>
               <span>
                 <ImHome />
               </span>
               Home
+            </Link>
+          </li>
+          <li onClick={onHideSidebar}>
+            <Link href="/shorts" className={navLinksCls}>
+              <span>
+                <Image src={shortsIcon} alt="short" width={20} height={20} />
+              </span>
+              Shorts
             </Link>
           </li>
           <li onClick={onHideSidebar}>
@@ -151,6 +162,7 @@ const Sidebar = ({
               Videos
             </Link>
           </li>
+          <div className="p-4"></div>
           {roleBasedLinks}
           <li onClick={onHideSidebar}>
             <Link href="/contact-us" className={navLinksCls}>
