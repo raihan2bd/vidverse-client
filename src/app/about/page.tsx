@@ -13,7 +13,7 @@ const About = () => {
           <div className="bg-[#243d66] text-3xl py-2 px-6 text-white">
             <p className="whitespace-nowrap font-rockSalt">Abu Raihan</p>
           </div>
-          <div className="bg-[#b8b2e6] pt-6 m-4 rounded-full px-4 py-2">
+          <div className="bg-[#b8b2e6] p-4 m-4 rounded-full py-4">
             <Image
               src={Abu}
               alt="Abu Raihan"
@@ -53,10 +53,10 @@ const About = () => {
           </p>
         </div>
         <div className="flex flex-col">
-          <div className="bg-[#243d66] font-rockSalt text-3xl py-2 px-6 text-white">
+          <div className="bg-[#243d66]  text-3xl py-2 px-6 text-white">
             <p className="whitespace-nowrap">Nurgul Kereikhan</p>
           </div>
-          <div className="bg-[#b8b2e6] pt-6 m-4 rounded-full px-4 py-2">
+          <div className="bg-[#b8b2e6] p-4 m-4 rounded-full py-4">
             <Image
               src={Nurka}
               alt="Nurka"
@@ -183,7 +183,7 @@ const About = () => {
           </div>
         </div>
       </div>
-      <div className="flex justify-around bg-[#243d66] w-full py-6 px-10">
+      <div className="flex justify-around md:hidden bg-[#243d66] w-full py-6 px-10">
         <div className="flex gap-4 text-2xl text-white">
           <Link
             href="https://github.com/raihan2bd"
@@ -235,7 +235,7 @@ const About = () => {
           </Link>
         </div>
       </div>
-      <div className="py-1">
+      <div className="py-1 md:hidden">
         Copyright © 2024 Vidverse®. All rights reserved.
       </div>
     </section>
