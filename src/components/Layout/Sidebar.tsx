@@ -36,12 +36,9 @@ const Sidebar = ({
   const navLinksCls =
     "flex gap-2 px-4 py-2 font-bold items-center hover:bg-custom-violet-300 hover:ps-8 transition-all duration-200 ease-in-out active:bg-white/10 md:active:bg-black/20 rounded-lg";
 
-  const authLinksCls =
-    "w-full flex gap-2 px-4 py-3 font-bold bg-slate-800 text-orange-300 items-center hover:text-orange-700 hover:bg-white/10 md:hover:bg-black/20 hover:ps-8 transition-all duration-200 ease-in-out active:bg-white/10 md:active:bg-black/20";
-
   return (
     <aside
-      className={`${sidebarClasses} bg-custom-violet-500 backdrop-blur-md no-scrollbar overflow-hidden`}
+      className={`${sidebarClasses} bg-custom-violet-500/30 backdrop-blur-md no-scrollbar overflow-hidden z-30`}
     >
       <span
         className="sm:hidden absolute text-xl z-[4] right-[1.5rem] bg-red-500 text-white p-1 rounded-sm top-[10rem] cursor-pointer"
@@ -50,8 +47,8 @@ const Sidebar = ({
         <MdCancel />
       </span>
 
-      <nav className="pt-20 md:pt-2 h-full w-[80%] md:w-full max-w-[100%] bg-custom-violet-500/60 absolute z-[2] overflow-y-auto">
-        <ul className="list-none flex flex-col gap-[2px] text-white px-4">
+      <nav className="pt-20 md:pt-2 min-h-full w-[80%] md:w-full max-w-[100%] bg-custom-violet-500 absolute z-[2] overflow-y-scroll">
+        <ul className="list-none flex flex-col gap-[2px] text-white px-4 overflow-y-scroll">
           <li onClick={onHideSidebar}>
             <Link href="/" className={navLinksCls}>
               <span>
@@ -109,7 +106,7 @@ const Sidebar = ({
               Your Channels
             </Link>
           </li>
-          <li onClick={onHideSidebar}>
+          <li>
             <button className={navLinksCls} onClick={() => setShowMore((prev) => !prev)} style={{width: '100%'}}>
               <span>
                 {showMore ? <FaAngleUp /> : <FaAngleDown />}
@@ -131,10 +128,10 @@ const Sidebar = ({
             </Link>
           </li>
         </ul>
-      </nav>
-      <footer className="fixed z-[2] bottom-0 w-[80%] md:w-full max-w-full overflow-hidden text-sm text-white border-0 border-t p-2 text-center">
+      <footer className="fixed z-[1] bottom-0 left-0 bg-custom-violet-500 w-[80%] md:w-full max-w-full overflow-hidden text-sm text-white border-0 border-t p-2 text-center">
         Copyright &copy; {String(year)} Vidverse&#174;. All rights reserved.
       </footer>
+      </nav>
     </aside>
   );
 };
