@@ -36,20 +36,20 @@ const About = () => {
           </p>
           <div className="mt-6">
             <p className="text-6xl text-[#243b66] font-bold">Meet Our</p>
-            <div className="bg-[#c68df9] rounded-md w-1/3">
+            <div className="bg-[#c68df9] rounded-md w-1/2">
               <p className="text-white font-bold text-6xl px-2 w-2/6 ">TEAM</p>
             </div>
           </div>
           <p className="pt-4">
-            Welcome to our team's space! We are a collaborative group of skilled
-            developers, each specializing in distinct areas – from robust
-            backend solutions to engaging front-end interfaces and thoughtful
-            UI/UX design. Our synergy brings life to innovative projects.
-            Explore our collective journey on GitHub, where we showcase our
-            collaborative efforts and contributions. Connect with each team
-            member individually on LinkedIn to dive into their unique expertise.
-            Join us in shaping the digital future through code. Together, we
-            make the extraordinary happen
+            Welcome to our team&apos;s space! We are a collaborative group of
+            skilled developers, each specializing in distinct areas – from
+            robust backend solutions to engaging front-end interfaces and
+            thoughtful UI/UX design. Our synergy brings life to innovative
+            projects. Explore our collective journey on GitHub, where we
+            showcase our collaborative efforts and contributions. Connect with
+            each team member individually on LinkedIn to dive into their unique
+            expertise. Join us in shaping the digital future through code.
+            Together, we make the extraordinary happen
           </p>
         </div>
         <div className="flex flex-col">
@@ -87,7 +87,7 @@ const About = () => {
               rel="noreferrer"
             />
           </Link>
-          <Link href="">
+          <Link href="https://portfolio-raihan2bd.vercel.app/">
             <IoMdClipboard
               className="cursor-pointer"
               target="_blank"
