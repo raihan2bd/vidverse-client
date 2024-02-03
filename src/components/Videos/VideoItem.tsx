@@ -4,12 +4,14 @@ import noThumb from '../../../public/images/default-thumb.jpg';
 import Image from 'next/image';
 import convertViews from '@/utils/convertViews';
 import { convertTime } from '@/utils/convertTime';
+import { BsThreeDotsVertical } from "react-icons/bs";
+
 interface VideoItemProps {
   video: VideoType;
 }
 const VideoItem = ({ video }: VideoItemProps) => {
   return (
-    <li className="w-[100%] max-w-[100%] shrink-1 bg-gradient-to-t from-[#BEB8E7] to-purple-white  p-2 flex flex-col justify-between overflow-hidden">
+    <li className="w-[100%] max-w-[100%] shrink-1 bg-gradient-to-t from-[#BEB8E7] to-purple-white  p-2 flex flex-col justify-between overflow-hidden relative">
       <Link href={`/videos/${video.id}`} className="block">
         <div className="relative w-full h-[240px] sm:h-[200px]">
           <Image
@@ -46,18 +48,20 @@ const VideoItem = ({ video }: VideoItemProps) => {
             />
           </div>{' '}
         </Link>
-        <div className="flex flex-col">
-          <div className="flex font-bold justify-between">
+        <div className="flex flex-col w-full justify-center">
+          <div className="flex font-bold justify-between w-full items-center">
             <span>{video.channel_title}</span>
-            <span className="">{`${convertViews(video.views)} views`}</span>
+            <span className="ms-auto">{`${convertViews(video.views)} views`}</span>
           </div>
           <div className="text-xs text-custom-blue-500">
-            <p>
-              Container house <span> ~ {convertTime(video.created_at)}</span>
+            <p className=''>
+            {convertTime(video.created_at)}
             </p>
           </div>
         </div>
       </div>
+
+      <button className='text-white text-lg absolute z-[1] top-[1rem] right-[0.725rem] hover:text-red-500'><BsThreeDotsVertical /></button>
     </li>
   );
 };
