@@ -47,8 +47,8 @@ const Sidebar = ({
         <MdCancel />
       </span>
 
-      <nav className="pt-20 md:pt-2 min-h-full w-[80%] md:w-full max-w-[100%] bg-custom-violet-500 absolute z-[2] overflow-y-scroll">
-        <ul className="list-none flex flex-col gap-[2px] text-white px-4 overflow-y-scroll">
+      <nav className="pt-20 md:pt-2 min-h-full w-[80%] md:w-full max-w-[100%] bg-custom-violet-500 absolute z-[2] overflow-y-auto">
+        <ul className="list-none flex flex-col gap-[2px] text-white px-4 overflow-y-auto">
           <li onClick={onHideSidebar}>
             <Link href="/" className={navLinksCls}>
               <span>
