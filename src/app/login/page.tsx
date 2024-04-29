@@ -15,6 +15,9 @@ import google from "../../../public/images/google-icon.svg";
 import fb from "../../../public/images/fb-icon.svg";
 import Image from "next/image";
 
+import { signInWithPopup } from "firebase/auth";
+import {auth, googleProvider} from "@/lib/firebaseConfig"
+
 const Login = () => {
   const { data: session } = useSession();
   const [showPass, setShowPass] = useState(false);
@@ -102,6 +105,16 @@ const Login = () => {
     }
   };
 
+  const onGoogleSignIn = async () => {
+    try {
+      
+      const res = await signInWithPopup(auth, googleProvider);
+      console.log(res);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   const inputCls = useMemo(() => {
     return "px-4 py-2 text-custom-blue-400 bg-transparent border-0 border-b-2 border-white mb-6 outline-none text-base placeholder:text-white/50 md:mb-4";
   }, []);
@@ -180,7 +193,7 @@ const Login = () => {
             <div className="text-custom-blue-400 flex flex-col items-center mt-2 gap-3 text-sm">
               <p>Sign in with</p>
               <div className="flex flex-row gap-6">
-                <button>
+                <button type="button" onClick={onGoogleSignIn}>
                   <Image src={google} alt="Google" width={30} height={30} />
                 </button>
                 <button>
