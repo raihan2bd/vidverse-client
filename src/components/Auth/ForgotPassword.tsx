@@ -4,6 +4,7 @@ import axios from "axios";
 import { FormEvent, useEffect, useState } from "react";
 import Button from "../UI/Button";
 import { useGlobalState } from "@/context/store";
+import { useRouter } from "next/navigation";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL + '/api/v1/auth';
 
@@ -17,11 +18,13 @@ const ForgotPassword = () => {
   const [email, setEmail] = useState("");
   const [isEmailSent, setIsEmailSent] = useState(false);
   const [isVerified, setIsVerified] = useState(false);
-  const [timer, setTimer] = useState(0);
+  const [timer, setTimer] = useState<number>(0);
   const [userId, setUserId] = useState(null);
   const [code, setCode] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+
+  const router = useRouter();
 
   const isPasswordMatch = password === confirmPassword;
 
@@ -48,13 +51,19 @@ const ForgotPassword = () => {
       if (response.status === 201) {
         setSuccess("An Email sent to your inbox. Please check your inbox");
         setIsEmailSent(true);
-        setTimer(25);
+        setTimer(61);
         const interval = setInterval(() => {
-          setTimer((prev) => prev - 1);
+          setTimer((prev: number) => {
+            if (prev === 0) {
+              clearInterval(interval);
+              return 0;
+            }
+            return prev - 1;
+          });
         }, 1000);
         setTimeout(() => {
           clearInterval(interval);
-        }, 25000);
+        }, 61000);
 
       }
     
@@ -73,6 +82,28 @@ const ForgotPassword = () => {
       if (response.status === 200) {
         setIsVerified(true);
         setUserId(response.data.user_id);
+      }
+    } catch (error :any) {
+      const msg = error.response.data.error || error.message || "Something went wrong. Please try again later"
+      setError(msg);
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  const onResetPassword = async () => {
+    try {
+      setIsLoading(true);
+      const response = await axios.post(`${API_URL}/reset-password`, { user_id: userId, password, otp: code});
+      if (response.status === 200) {
+        setSuccess("Password reset successfully. You can now login with your new password");
+        setEmail("");
+        setCode("");
+        setPassword("");
+        setConfirmPassword("");
+        setIsEmailSent(false);
+        setIsVerified(false);
+        router.replace("/login");
       }
     } catch (error :any) {
       const msg = error.response.data.error || error.message || "Something went wrong. Please try again later"
@@ -117,7 +148,7 @@ const ForgotPassword = () => {
           <form
             onSubmit={(e) => {
               e.preventDefault();
-              onSendEmail
+             onResetPassword();
               }
             }
           >
@@ -128,7 +159,7 @@ const ForgotPassword = () => {
               >
                 Password
               </label>
-              <input type="password" id="password" className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
+              <input type="password" id="password" className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" value={password} onChange={(e)=>setPassword(e.target.value)} />
             </div>
 
             <div className="mb-4">
@@ -138,7 +169,8 @@ const ForgotPassword = () => {
               >
                 Confirm Password
               </label>
-              <input type="password" id="password" className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
+              <input type="password" id="password" value={confirmPassword
+              } onChange={(e)=>setConfirmPassword(e.target.value)} className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
             </div>
 
             <div className="w-fit mx-auto">
@@ -189,7 +221,7 @@ const ForgotPassword = () => {
             <p className="text-gray-500">
               Don't get any email?{" "}
               {timer > 0 ? (
-                "Retry in " + timer + "soconds"
+                `Retry in ${timer} ${timer> 1? "seconds": "second"}`
               ) : (
                 <button className="text-indigo-600" onClick={onSendEmail}>Resend</button>
               )}
