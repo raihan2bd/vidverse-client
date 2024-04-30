@@ -17,6 +17,7 @@ import Image from "next/image";
 
 import { signInWithPopup } from "firebase/auth";
 import {auth, googleProvider} from "@/lib/firebaseConfig"
+import axios from "axios";
 
 const Login = () => {
   const { data: session } = useSession();
@@ -108,8 +109,12 @@ const Login = () => {
   const onGoogleSignIn = async () => {
     try {
       
-      const res = await signInWithPopup(auth, googleProvider);
-      console.log(res);
+      const res:any = await signInWithPopup(auth, googleProvider);
+      console.log(res._tokenResponse.idToken);
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/auth/social_login`, {
+        token: res._tokenResponse.idToken
+      });
+      console.log(response);
     } catch (error) {
       console.log(error);
     }
