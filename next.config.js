@@ -2,6 +2,16 @@
 const nextConfig = {
   images: {
     domains: ['res.cloudinary.com'],
+    remotePatterns: [
+      {
+        protocol: "http",
+        hostname: "**",
+      },
+      {
+        protocol: "https",
+        hostname: "**",
+      },
+    ],
   },
   webpack(config, options) {
     const { isServer } = options;

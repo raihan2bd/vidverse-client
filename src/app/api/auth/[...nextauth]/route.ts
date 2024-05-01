@@ -34,6 +34,24 @@ export const authOptions: NextAuthOptions = {
         return user;
       },
     }),
+
+    // custom provider
+    CredentialsProvider({
+      id: "social-login",
+      name: "Social Login",
+      credentials: {}, // Add an empty object for the credentials property
+
+      authorize: async (credentials: any, req) => {
+        if (!credentials.token || !credentials.user) return null;
+        const resp: any = {
+          token: credentials.token,
+          expires_at: JSON.parse(credentials.expires_at),
+          user: JSON.parse(credentials.user),
+        }
+
+        return resp;
+      }
+    })
   ],
 
   callbacks: {

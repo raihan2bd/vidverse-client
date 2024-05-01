@@ -108,17 +108,29 @@ const Login = () => {
 
   const onGoogleSignIn = async () => {
     try {
-      
       const res:any = await signInWithPopup(auth, googleProvider);
-      console.log(res._tokenResponse.idToken);
       const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/auth/social_login`, {
         token: res._tokenResponse.idToken
       });
-      console.log(response);
+      
+      if (response.status === 200) {
+        setSuccess("Login successful!");
+        // login with next-auth
+        await signIn("social-login", {
+          token: response.data.token,
+          expires_at: JSON.stringify(response.data.expires_at),
+          user: JSON.stringify(response.data.user),
+          redirect: false,
+          
+        });
+        router.push("/");
+      }
     } catch (error) {
       console.log(error);
     }
   }
+
+
 
   const inputCls = useMemo(() => {
     return "px-4 py-2 text-custom-blue-400 bg-transparent border-0 border-b-2 border-white mb-6 outline-none text-base placeholder:text-white/50 md:mb-4";
