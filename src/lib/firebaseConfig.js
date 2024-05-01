@@ -4,6 +4,7 @@ import { getAnalytics } from "firebase/analytics";
 import {
   getAuth,
   GoogleAuthProvider,
+  GithubAuthProvider
 } from "firebase/auth";
 
 const firebaseConfig = {
@@ -21,6 +22,7 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
 const googleProvider = new GoogleAuthProvider();
+const githubProvider = new GithubAuthProvider();
 
 
 
@@ -28,4 +30,4 @@ const googleProvider = new GoogleAuthProvider();
 // const app = initializeApp(firebaseConfig);
 // const analytics = getAnalytics(app);
 
-export { auth, googleProvider };
+export { auth, googleProvider, githubProvider };
