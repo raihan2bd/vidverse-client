@@ -16,7 +16,7 @@ import fb from "../../../public/images/fb-icon.svg";
 import Image from "next/image";
 
 import { signInWithPopup } from "firebase/auth";
-import {auth, googleProvider} from "@/lib/firebaseConfig"
+import {auth, googleProvider, githubProvider} from "@/lib/firebaseConfig"
 import axios from "axios";
 
 const Login = () => {
@@ -106,12 +106,19 @@ const Login = () => {
     }
   };
 
-  const onGoogleSignIn = async () => {
+  const onGoogleSignIn = async (type: string) => {
     try {
-      const res:any = await signInWithPopup(auth, googleProvider);
+      let res: any
+     if(type === "github") {
+        res = await signInWithPopup(auth, githubProvider);
+      } else {
+        res = await signInWithPopup(auth, googleProvider);
+      }
       const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/auth/social_login`, {
         token: res._tokenResponse.idToken
       });
+
+      console.log(response.data)
       
       if (response.status === 200) {
         setSuccess("Login successful!");
@@ -126,7 +133,11 @@ const Login = () => {
         router.push("/");
       }
     } catch (error) {
-      console.log(error);
+      console.log(error)
+      setHasError(
+        (error as Error).message ||
+          "Something went wrong. Please try again later"
+      );
     }
   }
 
@@ -210,10 +221,16 @@ const Login = () => {
             <div className="text-custom-blue-400 flex flex-col items-center mt-2 gap-3 text-sm">
               <p>Sign in with</p>
               <div className="flex flex-row gap-6">
-                <button type="button" onClick={onGoogleSignIn}>
+                <button type="button" onClick={(e) => {
+                  e.preventDefault();
+                  onGoogleSignIn("google")
+                }}>
                   <Image src={google} alt="Google" width={30} height={30} />
                 </button>
-                <button>
+                <button type="button" onClick={(e) => {
+                  e.preventDefault();
+                  onGoogleSignIn("github")
+                }}>
                   <Image src={fb} alt="Google" width={30} height={30} />
                 </button>
                 <button>
