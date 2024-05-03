@@ -61,8 +61,6 @@ const VideoItem = ({ video }: VideoItemProps) => {
     <li className="w-[100%] max-w-[100%] shrink-1 bg-gradient-to-t from-[#BEB8E7] to-purple-white  p-2 flex flex-col justify-between overflow-hidden relative">
       {isMore && (
         <div className="absolute z-[2] top-[40px] left-1/2 -translate-x-1/2 w-fit max-w-[92%]">
-          {/* add a backdrop */}
-          {/* <div className='absolute z-[1] top-0 left-0 w-full h-full bg-black opacity-50 rounded-md' onClick={() => setIsMore(false)}></div> */}
           <ul className="list-none flex gap-4 bg-white p-2 rounded-md shadow-md items-center">
             <li>
               <button
