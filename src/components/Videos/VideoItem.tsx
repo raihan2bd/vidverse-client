@@ -34,9 +34,12 @@ const VideoItem = ({ video }: VideoItemProps) => {
 
     try {
       setLoading(true);
-      const res = await axios.post('/api/v1/save_video', {
+      const res = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/watch_later`, {
         video_id: video.id
-      });
+      }, {
+        headers: {
+          Authorization: `${session.token}`
+        }});
       if(res.status === 201) {
         setSuccess("Video saved successfully");
       } else if(res.status === 401 || res.status === 403) {

@@ -52,8 +52,7 @@ const Like = ({ likesCount, is_liked, video_id }: Props) => {
         setIsLiked(false);
       }
     } catch (error: any) {
-      const messge =
-        ((error.response && error.response.data) && error.response.data) || error.message || "Something went wrong";
+      const messge = "Failed to like video";
       const status = error.response.data.status || error.status || 500;
       switch (status) {
         case 401:
