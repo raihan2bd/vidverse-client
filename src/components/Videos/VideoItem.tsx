@@ -1,17 +1,96 @@
-'use client';
-import Link from 'next/link';
-import noThumb from '../../../public/images/default-thumb.jpg';
-import Image from 'next/image';
-import convertViews from '@/utils/convertViews';
-import { convertTime } from '@/utils/convertTime';
+"use client";
+import Link from "next/link";
+import noThumb from "../../../public/images/default-thumb.jpg";
+import Image from "next/image";
+import convertViews from "@/utils/convertViews";
+import { convertTime } from "@/utils/convertTime";
 import { BsThreeDotsVertical } from "react-icons/bs";
+import { useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import { useSession, signOut } from "next-auth/react";
+import axios from "axios";
+import { useGlobalState } from "@/context/store";
 
 interface VideoItemProps {
   video: VideoType;
 }
 const VideoItem = ({ video }: VideoItemProps) => {
+  const {data: session, status} = useSession();
+  const [isMore, setIsMore] = useState(false);
+  const pathname = usePathname();
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
+  const {
+    setError,
+    setSuccess,
+  } = useGlobalState();
+
+  const onSave = async () => {
+    if(status === "loading") return;
+    if(!session) {
+      router.push(`/login?callback=${pathname}`);
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const res = await axios.post('/api/v1/save_video', {
+        video_id: video.id
+      });
+      if(res.status === 201) {
+        setSuccess("Video saved successfully");
+      } else if(res.status === 401 || res.status === 403) {
+        setError("Unauthorized")
+        signOut();
+        router.push(`/login?callback=${pathname}`);
+      } else {
+        setError("Failed to save video");
+      }
+
+    } catch {
+      setError("Failed to save video");
+      
+    } finally {
+      setIsMore(false)
+      setLoading(false);
+    }
+  }
+
+
   return (
     <li className="w-[100%] max-w-[100%] shrink-1 bg-gradient-to-t from-[#BEB8E7] to-purple-white  p-2 flex flex-col justify-between overflow-hidden relative">
+      {isMore && (
+        <div className="absolute z-[2] top-[40px] left-1/2 -translate-x-1/2 w-fit max-w-[92%]">
+          {/* add a backdrop */}
+          {/* <div className='absolute z-[1] top-0 left-0 w-full h-full bg-black opacity-50 rounded-md' onClick={() => setIsMore(false)}></div> */}
+          <ul className="list-none flex gap-4 bg-white p-2 rounded-md shadow-md items-center">
+            <li>
+              <button
+                onClick={onSave}
+                disabled={loading}
+                type="button"
+                className="px-2 py-1 bg-blue-500 text-white rounded hover:bg-blue-700 text-sm lg:text-base disabled:cursor-not-allowed disabled:bg-gray-400 disabled:text-gray-800 min-w-[75px]"
+              >
+                {loading? "Saving..." : "Save"}
+              </button>
+            </li>
+            <li>
+              <button
+                type="button"
+                onClick={() => {
+                  navigator.clipboard.writeText(
+                    `${window.location.origin}/videos/${video.id}`
+                  );
+                  setSuccess("Link copied to clipboard");
+                }}
+                className="px-2 py-1 bg-green-500 text-white rounded hover:bg-green-700 text-sm lg:text-base"
+              >
+                Share
+              </button>
+            </li>
+          </ul>
+        </div>
+      )}
       <Link href={`/videos/${video.id}`} className="block">
         <div className="relative w-full h-[240px] sm:h-[200px]">
           <Image
@@ -37,7 +116,7 @@ const VideoItem = ({ video }: VideoItemProps) => {
           <div className="relative w-[30px] text-custom-blue-600 font-semibold h-[30px] rounded-full">
             <Image
               src={
-                video.channel_logo && video.channel_logo !== ''
+                video.channel_logo && video.channel_logo !== ""
                   ? video.channel_logo.toString()
                   : noThumb.src
               }
@@ -46,22 +125,28 @@ const VideoItem = ({ video }: VideoItemProps) => {
               className="rounded-full"
               sizes="24px"
             />
-          </div>{' '}
+          </div>{" "}
         </Link>
         <div className="flex flex-col w-full justify-center">
           <div className="flex font-bold justify-between w-full items-center">
             <span>{video.channel_title}</span>
-            <span className="ms-auto">{`${convertViews(video.views)} views`}</span>
+            <span className="ms-auto">{`${convertViews(
+              video.views
+            )} views`}</span>
           </div>
           <div className="text-xs text-custom-blue-500">
-            <p className=''>
-            {convertTime(video.created_at)}
-            </p>
+            <p className="">{convertTime(video.created_at)}</p>
           </div>
         </div>
       </div>
 
-      <button className='text-white text-lg absolute z-[1] top-[1rem] right-[0.725rem] hover:text-red-500'><BsThreeDotsVertical /></button>
+      <button
+        className="text-white text-lg absolute z-[1] top-[2px] right-[0] hover:text-red-500 p-4"
+        type="button"
+        onClick={() => setIsMore((prev) => !prev)}
+      >
+        <BsThreeDotsVertical />
+      </button>
     </li>
   );
 };
