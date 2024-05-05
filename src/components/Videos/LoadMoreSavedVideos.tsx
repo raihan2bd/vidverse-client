@@ -5,7 +5,7 @@ import { useInView } from "react-intersection-observer";
 import VideoItem from "./VideoItem";
 
 import Spinner from '@/components/UI/Spinner'
-import getAllLikedVideos from "@/lib/getAllLikedVideos";
+import getAllSavedVideos from "@/lib/getAllSavedVideos";
 import { useGlobalState } from "@/context/store";
 import { useRouter } from "next/navigation";
 import { signOut } from "next-auth/react";
@@ -36,7 +36,7 @@ const LoadMoreSavedVideos = ({token, has_next_page}: PropTypes) => {
 
       await new Promise((resolve) => setTimeout(resolve, 2000));
       const nextPage = page + 1;
-      const res = await getAllLikedVideos(token, nextPage);
+      const res = await getAllSavedVideos(token, nextPage);
       const {videos, has_next_page} = res.data
 
       setVideos((prevVideos: VideoType[]) => [...prevVideos, ...videos]);
