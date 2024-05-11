@@ -35,7 +35,7 @@ const Sidebar = ({
 
   return (
     <aside
-      className={`${sidebarClasses} bg-custom-violet-500/30 backdrop-blur-md no-scrollbar overflow-hidden z-30`}
+      className={`${sidebarClasses} bg-custom-violet-500/30 backdrop-blur-md no-scrollbar z-30`}
     >
       <span
         className="sm:hidden absolute text-xl z-[4] right-[1.5rem] bg-red-500 text-white p-1 rounded-sm top-[10rem] cursor-pointer"
@@ -43,8 +43,8 @@ const Sidebar = ({
       >
         <MdCancel />
       </span>
-
-      <nav className="pt-20 md:pt-2 min-h-full w-[80%] md:w-full max-w-[100%] bg-custom-violet-500 absolute z-[2] overflow-y-auto">
+    
+      <nav className="flex-1 h-[calc(100vh-5rem)] pt-20 md:pt-2 w-[80%] md:w-full max-w-[100%] bg-custom-violet-500 absolute z-[2] overflow-y-auto flex flex-col justify-between">
         <ul className="list-none flex flex-col gap-[2px] text-white px-4 overflow-y-auto">
           <li onClick={onHideSidebar}>
             <Link href="/" className={navLinksCls}>
@@ -125,7 +125,7 @@ const Sidebar = ({
             </Link>
           </li>
         </ul>
-      <footer className="fixed z-[1] bottom-0 left-0 bg-custom-violet-500 w-[80%] md:w-full max-w-full overflow-hidden text-sm text-white border-0 border-t p-2 text-center">
+      <footer className="bg-custom-violet-500 w-[80%] md:w-full max-w-full overflow-hidden text-sm text-white border-0 border-t p-2 text-center h-fit mt-auto mx-auto">
         Copyright &copy; {String(year)} Vidverse&#174;. All rights reserved.
       </footer>
       </nav>
