@@ -10,12 +10,9 @@ import { MdCancel } from "react-icons/md";
 import { SiYoutubestudio } from "react-icons/si";
 import { IoMdMail, IoIosSettings } from "react-icons/io";
 
-
-import { useMemo, useState } from "react";
-import { signOut } from "next-auth/react";
-
 import shortsIcon from "../../../public/images/shorts-icon.svg";
 import Image from "next/image";
+import { useState } from "react";
 
 interface PropTypes {
   sidebarClasses: string;

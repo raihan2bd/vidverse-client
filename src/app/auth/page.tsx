@@ -4,8 +4,11 @@ import Link from "next/link";
 
 const AuthPage = () => {
   return (
-    <section className="bg-custom-violet-300 grid grid-cols-2 min-h-screen mt-[-5rem] p-[6%] md:p-[8%] items-center">
+    <section className="bg-custom-violet-300 grid grid-cols-2 min-h-screen mt-[-5rem] p-[6%] md:p-[8%] items-center relative">
+      <Link className="absolute top-[2rem] right-4 p-2 block w-[150px] max-w-[100%] bg-gradient-btn rounded-20 px-5 py-3 shadow-custom-btn text-sm text-center text-white hover:text-custom-blue-400" href="/">
+          Back to Home </Link>
       <div className="col-span-full md:col-span-1 flex flex-col gap-2">
+        
         <h2 className="text-white text-5xl font-semibold text-left">Hello!</h2>
         <p className="text-white text-lg mt-2">
           Best place were <br /> You can kill your time.
