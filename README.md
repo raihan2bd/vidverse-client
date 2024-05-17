@@ -134,7 +134,6 @@ NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID= Your firebase messaging sender id
 NEXT_PUBLIC_FIREBASE_APP_ID= Your firebase app id
 NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID= Your firebase measurement id
 ```
-- 
 ### Install
 
 - To install all the npm packages navigate to the folder address on your terminal and enter the below command ⬇️
