@@ -30,7 +30,7 @@ Introducing Vidverse – a dynamic, full-stack web application crafted with Gola
 
 Creators have the power to effortlessly share their latest videos and manage their content, while subscribers revel in curated feeds, saved favorites, and personalized watch histories. User can also see their notifications.
 
-This is the back-end version. If you want to see the front-end part please visit [here](https://github.com/raihan2bd/vidverse)
+This is the front-end version. If you want to see the front-end part please visit [here](https://github.com/raihan2bd/vidverse)
 
 ## 🛠 Built With <a name="built-with"></a>
 ### Tech Stack <a name="tech-stack"></a>
