@@ -86,10 +86,6 @@ This is the back-end version. If you want to see the front-end part please visit
 ![Vidverse](https://github.com/raihan2bd/vidverse-client/blob/dev/screenshots/Screenshot%20from%202024-05-17%2023-38-01.png)
 
 
-
-
-
-
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ### Key Features <a name="key-features"></a>
