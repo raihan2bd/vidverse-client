@@ -111,8 +111,6 @@ To run this project you need:
 - First of all, To run the front end you need to run the [back end](https://github.com/raihan2bd/vidverse) on your local machine.
 - Then Make sure you have installed [NodeJs](https://nodejs.org).
 - Then make sure you have installed [TypeScript](https://www.typescriptlang.org/)
-- Make sure you have installed [React](https://reactjs.org/) on your local machine if you want to use this project locally.
-
 ### Setup
 
 - Then you need to clone the project on your local machine⬇️
