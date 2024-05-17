@@ -296,12 +296,12 @@ const CreateORUpdateChannelForm = ({
           value={description as string}
           onChange={descriptionChangeHandler}
           onBlur={descriptionBlurHandler}
-          placeholder="Enter your Video description"
+          placeholder="Enter your Channel description"
         ></textarea>
       </div>
 
       <Button disabled={!isFormValid} type="submit" btnClass="w-full py-3 mt-4">
-        {loading ? "Please Wait..." : edit ? "Edit Video" : "Upload Video"}
+        {loading ? "Please Wait..." : edit ? "Edit Channel" : "Create Channel"}
       </Button>
     </form>
   );
