@@ -1,8 +1,9 @@
 import getRelatedVideos from "@/lib/getRelatedVideos";
 import Link from "next/link";
 
-const RelatedVideos = async ({id}: {id: number}) => {
-  const { videos: relatedVideos } = await getRelatedVideos(id);
+const RelatedVideos = async ({channelId, videoId
+}: {channelId: number, videoId: number}) => {
+  const { videos: relatedVideos } = await getRelatedVideos(channelId, videoId);
   return (
     <div className="w-[100%]">
       <h2 className="text-lg text-black/70 font-bold text-center mb-4">Related Videos</h2>

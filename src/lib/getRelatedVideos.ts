@@ -1,6 +1,6 @@
-export default async (id: number,) => {
+export default async (channelId: number, videoId: number) => {
   const apiUrl = process.env.NEXT_API_URL;
-  const response = await fetch(`${apiUrl}/api/v1/related_videos/${id}`, { cache: 'no-store' });
+  const response = await fetch(`${apiUrl}/api/v1/related_videos/${channelId}/${videoId}`, { cache: 'no-store' });
   if(!response.ok) {
     if(response.status === 401) {
       // Logout the current user

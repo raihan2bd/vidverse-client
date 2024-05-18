@@ -27,7 +27,7 @@ const Video = async ({ params: { id } }: Props) => {
     <VideoAction id={videoId} user_id={video.channel.user_id} />) : null
 
   return (
-    <div className="flex flex-col md:flex-row gap-6 p-4 md:p-6 justify-between">
+    <div className="flex flex-col md:flex-row gap-6 p-4 md:p-6 justify-between relative">
       <article className="flex-shrink flex-grow w-[100vw] md:w-[33%] max-w-[100%] flex flex-col gap-2 bg-white rounded-xl">
         <video
           className="max-w-[100%] w-full overflow-hidden"
@@ -51,8 +51,8 @@ const Video = async ({ params: { id } }: Props) => {
         <CommentList id={videoId} views={video.views} />
       </article>
 
-      <aside className="md:ms-4 flex-auto flex-shrink-1 w-[100%] md:w-[280px] max-w-[100%]">
-        <RelatedVideos id={videoId} />
+      <aside className="md:ms-4 flex-auto flex-shrink-1 w-[100%] md:w-[280px] max-w-[100%] h-screen overflow-y-auto sticky top-0">
+        <RelatedVideos channelId={video.channel.id} videoId={videoId} />
       </aside>
     </div>
   );
