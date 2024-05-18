@@ -37,7 +37,7 @@ const LoadMoreSavedVideos = ({token, has_next_page}: PropTypes) => {
       await new Promise((resolve) => setTimeout(resolve, 2000));
       const nextPage = page + 1;
       const res = await getAllSavedVideos(token, nextPage);
-      const {videos, has_next_page} = res.data
+      const {videos, has_next_page} = res
 
       setVideos((prevVideos: VideoType[]) => [...prevVideos, ...videos]);
       setPage(page + 1);

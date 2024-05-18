@@ -8,9 +8,15 @@ import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 
 
-export const revalidate = 1;
+export const revalidate = 0;
+type Props = {
+  params: {
+    id: string;
+  };
+};
 
-const LikedVideos = async() => {
+
+const LikedVideos = async({params: { id } }: Props) => {
   const session = await getServerSession(authOptions);
   if (!session) {
     redirect("/login");

@@ -13,52 +13,73 @@ import { useGlobalState } from "@/context/store";
 
 interface VideoItemProps {
   video: VideoType;
+  isSaved?: boolean;
 }
-const VideoItem = ({ video }: VideoItemProps) => {
-  const {data: session, status} = useSession();
+const VideoItem = ({ video, isSaved = false }: VideoItemProps) => {
+  const { data: session, status } = useSession();
   const [isMore, setIsMore] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
-  const {
-    setError,
-    setSuccess,
-  } = useGlobalState();
+  const { setError, setSuccess } = useGlobalState();
 
   const onSave = async () => {
-    if(status === "loading") return;
-    if(!session) {
+    if (status === "loading") return;
+    if (!session) {
       router.push(`/login?callback=${pathname}`);
       return;
     }
 
     try {
       setLoading(true);
-      const res = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/watch_later`, {
-        video_id: video.id
-      }, {
-        headers: {
-          Authorization: `${session.token}`
-        }});
-      if(res.status === 201) {
-        setSuccess("Video saved successfully");
-      } else if(res.status === 401 || res.status === 403) {
-        setError("Unauthorized")
-        signOut();
-        router.push(`/login?callback=${pathname}`);
+      if (!isSaved) {
+        const res = await axios.post(
+          `${process.env.NEXT_PUBLIC_API_URL}/api/v1/watch_later`,
+          {
+            video_id: video.id,
+          },
+          {
+            headers: {
+              Authorization: `${session.token}`,
+            },
+          }
+        );
+        if (res.status === 201) {
+          setSuccess("Video saved successfully");
+        } else if (res.status === 401 || res.status === 403) {
+          setError("Unauthorized");
+          signOut();
+          router.push(`/login?callback=${pathname}`);
+        } else {
+          setError("Failed to save video");
+        }
       } else {
-        setError("Failed to save video");
+        const res = await axios.delete(
+          `${process.env.NEXT_PUBLIC_API_URL}/api/v1/watch_later/${video.id}`,
+          {
+            headers: {
+              Authorization: `${session.token}`,
+            },
+          }
+        );
+        if (res.status === 204) {
+          setSuccess("Video removed successfully");
+          router.refresh();
+        } else if (res.status === 401 || res.status === 403) {
+          setError("Unauthorized");
+          signOut();
+          router.push(`/login?callback=${pathname}`);
+        } else {
+          setError("Failed to remove video");
+        }
       }
-
     } catch {
       setError("Failed to save video");
-      
     } finally {
-      setIsMore(false)
+      setIsMore(false);
       setLoading(false);
     }
-  }
-
+  };
 
   return (
     <li className="w-[100%] max-w-[100%] shrink-1 bg-gradient-to-t from-[#BEB8E7] to-purple-white  p-2 flex flex-col justify-between overflow-hidden relative">
@@ -72,7 +93,13 @@ const VideoItem = ({ video }: VideoItemProps) => {
                 type="button"
                 className="px-2 py-1 bg-blue-500 text-white rounded hover:bg-blue-700 text-sm lg:text-base disabled:cursor-not-allowed disabled:bg-gray-400 disabled:text-gray-800 min-w-[75px]"
               >
-                {loading? "Saving..." : "Save"}
+                {isSaved
+                  ? loading
+                    ? "Removing..."
+                    : "Remove"
+                  : loading
+                  ? "Saving..."
+                  : "Save"}
               </button>
             </li>
             <li>
