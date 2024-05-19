@@ -63,7 +63,7 @@ This is the front-end version. If you want to see the front-end part please visi
 
 ## 🚀 Live Demo <a name="live-demo"></a>
 
-- Project ScreenShot
+- Project Screen Shots
 
 ![Vidverse](https://raw.githubusercontent.com/raihan2bd/vidverse-client/dev/screenshots/Screenshot%20from%202024-05-17%2023-38-57.png)
 
