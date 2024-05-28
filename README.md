@@ -59,8 +59,6 @@ This is the front-end version. If you want to see the front-end part please visi
 </details>
 
 
-<!-- LIVE DEMO -->
-
 ## 🚀 Live Demo <a name="live-demo"></a>
 
 - Project Screen Shots
