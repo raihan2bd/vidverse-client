@@ -114,13 +114,9 @@ const UploadOrEditVideoForm = ({
   let formIsValid = false;
   if (edit) {
     formIsValid = !titleError && !descriptionError;
-    
   } else {
     formIsValid =
-      !titleError &&
-      !videoError &&
-      !descriptionError &&
-      selectedChannel !== "";
+      !titleError && !videoError && !descriptionError && selectedChannel !== "";
   }
 
   const submitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -129,7 +125,6 @@ const UploadOrEditVideoForm = ({
 
     // validate form
     if (!formIsValid) {
-      console.log("form is not valid");
       if (edit) {
         if (video && videoError) {
           videoBlurHandler();
@@ -154,7 +149,6 @@ const UploadOrEditVideoForm = ({
       return;
     }
 
-
     // set form data
     const formData = new FormData();
     let uri = `${API_URL}/api/v1/videos`;
@@ -177,13 +171,12 @@ const UploadOrEditVideoForm = ({
           Authorization: token,
         },
       });
-      
+
       setSuccess(successMsg(response, "Video uploaded successfully!"));
       const video_id = response.data.video_id || videoDetails?.id;
-      router.push(`/videos${video_id? `/${video_id}`: ''}`); // redirect to video page
-
+      router.push(`/videos${video_id ? `/${video_id}` : ""}`); // redirect to video page
     } catch (error: any) {
-      const {errMsg: msg, status} = errMsgWithStatus(error);
+      const { errMsg: msg, status } = errMsgWithStatus(error);
       switch (status) {
         case 401:
           setError("Failed to authenticate");
@@ -191,7 +184,11 @@ const UploadOrEditVideoForm = ({
           break;
         case 403:
           setError("You are not authorized to access this resource");
-          router.push(`/contact-us?req_for=author&callback=/dashboard/upload-video${videoDetails?.id ? `?edit=${videoDetails?.id}` : ""}`);
+          router.push(
+            `/contact-us?req_for=author&callback=/dashboard/upload-video${
+              videoDetails?.id ? `?edit=${videoDetails?.id}` : ""
+            }`
+          );
           break;
         default:
           setError(msg);
@@ -249,7 +246,6 @@ const UploadOrEditVideoForm = ({
         />
       );
     } else if (videoDetails?.thumb) {
-      console.log(videoDetails?.thumb);
       return (
         <img
           className="rounded max-h-[100%] max-w-[100%] border mx-auto"
@@ -335,12 +331,15 @@ const UploadOrEditVideoForm = ({
           onChange={videoChangeHandler}
           onBlur={videoBlurHandler}
           inputError={isVideoTouched ? videoError : null}
-          accept="video/mp4, video/ogg, video/webm, video/avi, video/mov"
+          accept="video/mp4, video/ogg, video/webm, video/x-msvideo, video/quicktime, video/x-matroska"
         />
 
         <div className="flex flex-col gap-2">
           <label className="text-sm text-black/90" htmlFor="description">
-            Description: {descriptionError && descriptionIsTouched && <span className="text-red-500 ms-2">{descriptionError}</span>}
+            Description:{" "}
+            {descriptionError && descriptionIsTouched && (
+              <span className="text-red-500 ms-2">{descriptionError}</span>
+            )}
           </label>
           <textarea
             className="border border-black/30 rounded-sm p-2 w-full h-32"
