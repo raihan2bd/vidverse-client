@@ -169,11 +169,18 @@ export const validateVideo = (video: File | null): ValidationResultType => {
       msg: `Please upload a video.`,
     }
   }
-  const condition = video.type === 'video/mp4' || video.type === 'video/ogg' || video.type === 'video/webm' || video.type === 'video/mov' || video.type === 'video/avi';
+  const condition = video.type === 'video/mp4' ||  // MP4
+  video.type === 'video/ogg' ||  // OGG
+  video.type === 'video/webm' ||  // WebM
+  video.type === 'video/quicktime' ||  // MOV
+  video.type === 'video/x-msvideo' ||  // AVI
+  video.type === 'video/x-ms-wmv' ||  // WMV
+  video.type === 'video/x-matroska';  // MKV
+
   if (!condition) {
     return {
       isValid: false,
-      msg: `Please upload a valid video file in MP4, OGG and WEBM.`,
+      msg: `Please upload a valid video file in MP4, OGG, MKV, WMV and WEBM.`,
     }
   }
   return { 
