@@ -85,9 +85,9 @@ export const WebSocketProvider = ({ children }: { children: ReactNode }) => {
       setUiState((state) => ({
         ...state,
         loading: value,
-        success: false,
-        error: false,
-        message: null,
+        success: state.success,
+        error: state.error,
+        message: state.message,
       })),
     []
   );
